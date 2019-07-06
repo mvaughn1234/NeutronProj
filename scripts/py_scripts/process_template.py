@@ -1,0 +1,18 @@
+from multiprocessing import Process, Lock, Semaphore
+from Generator import Generator
+# import mysql.connector
+from Props import Props
+
+# accMatDB = mysql.connector.connect(
+#     host='localhost',
+#     user='matt',
+#     passwd='test'
+# )
+# matCursor = accMatDB.cursor()
+# matCursor.execute("CREATE DATABASE accMatDB")
+
+gen = [Generator(), Generator(), Generator()]
+sharedSem = Semaphore(Generator.procCount)
+sharedLock = Lock()
+for i in range(0, 3):
+    Process(target=gen[i].run, args=(sharedLock, sharedSem,)).start()

@@ -1,0 +1,20 @@
+# Input dir with respect to the directory from which the script is run
+
+Input Directory: output
+
+# Names of any subdirectories of the input dir that the script shouldn't search
+# to find any tests that match a "Test Names" file
+
+Exclude Directory: polarisj3,UPENN
+
+# Scripts to run ... currently doesn't actually use this list.
+
+Scripts: iterative_recon_plotter.py,plot_events.py
+
+# Names of (potential) files to run the scripts on
+
+Test Names: output.dat,events.dat
+
+# Output dir with respect to the directory from which the script is run
+
+Output Directory: .
