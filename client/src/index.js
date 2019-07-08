@@ -1,9 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import 'bootstrap/dist/css/bootstrap.css';
-// import './assets/scss/black-dashboard-react.scss';
-// import './assets/demo/demo.css';
-// import './assets/css/nucleo-icons.css';
+// import './assets-old/assets/scss/black-dashboard-react.scss';
+// import './assets-old/assets/demo/demo.css';
+// import './assets-old/assets/css/nucleo-icons.css';
+import 'jquery';
+import 'popper.js';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';

@@ -1,38 +1,46 @@
 import React, {Component} from 'react'
-// import {Link} from 'react-router-dom';
-import { Navbar } from "react-bootstrap";
-import { Nav } from "react-bootstrap";
-import { NavDropdown } from "react-bootstrap";
-import { Form } from "react-bootstrap";
-import { FormControl } from "react-bootstrap";
-import { Button } from "react-bootstrap";
+import {LinkContainer} from 'react-router-bootstrap';
+import {Navbar, Nav} from "react-bootstrap";
+import {Button} from 'react-bootstrap';
 
 class Header extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
+        this.state = {pages: this.props.pages};
+        this.changePage = this.changePage.bind(this);
+    }
+
+    changePage(id, e) {
+        const {pages} = this.state;
+        let runBtn = document.getElementById('run-btn')
+        runBtn.hidden = pages[id].runButton ? false : true;
+        runBtn.innerHTML = pages[id].runButton;
     }
 
     render() {
+        const {pages} = this.state;
         return (
-            <Navbar bg={"light"} expand="lg">
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                <Navbar.Collapse id="basic-navbar-nav">
-                    <Nav className="mr-auto">
-                        <Nav.Link href="#home">Home</Nav.Link>
-                        <Nav.Link href="#link">Link</Nav.Link>
-                        <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-                            <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-                            <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
-                            <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-                            <NavDropdown.Divider />
-                            <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
-                        </NavDropdown>
-                    </Nav>
-                    <Form inline>
-                        <FormControl type="text" placeholder="Search" className="mr-sm-2" />
-                        <Button variant="outline-success">Search</Button>
-                    </Form>
-                </Navbar.Collapse>
+            <Navbar expand="lg" className='light font-weight-bold'>
+                <Nav defaultActiveKey="props" className="mr-auto">
+                    {Object.keys(pages).map((page, index) =>
+                        <LinkContainer to={pages[page].url} key={pages[page].key}
+                                       onClick={e => this.changePage(page, e)}>
+                            <Nav.Item>
+                                <Nav.Link href={pages[page].url}
+                                          eventKey={pages[page].key}>{pages[page].title}</Nav.Link>
+                            </Nav.Item>
+                        </LinkContainer>
+                    )}
+                </Nav>
+                <Nav className="ml-auto">
+                    <Nav.Item>
+                        <Button id='run-btn' className='blue6' style={{
+                            borderRadius: '18px',
+                            boxShadow: '0 0 2px 2px rgba(0,0,0,0.2)',
+                            border: '1px outset #21496f'
+                        }}>{this.state.runPhrase}</Button>
+                    </Nav.Item>
+                </Nav>
             </Navbar>
         );
     }
