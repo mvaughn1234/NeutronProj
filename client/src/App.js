@@ -42,7 +42,6 @@ class App extends Component {
 
     changeProps(props) {
         this.setState({props: props, updated: true});
-        console.log(this.state.props)
     }
 
     initData(){
@@ -92,7 +91,7 @@ class App extends Component {
                     ]
                 }
         };
-        this.setProps(tempProps);
+        this.changeProps(tempProps);
         axios.post('/props/set', tempProps)
             .catch(err => console.log(`err: ${err}`));
     }

@@ -90,12 +90,12 @@ class SetProperties extends Component {
                                                overflow: 'auto',
                                            }}>
                                     <ListGroup className='p-0 m-0 list-group-flush'>
-                                        {this.state.props.matList.map((mat) =>
+                                        {this.state.props? this.state.props.matList > 0 ? this.state.props.matList.map((mat) =>
                                             mat.name === 'Vacuum' ? '' :
                                                 <ListGroupItem className='px-0 py-2' key={mat._id}>
                                                     <MatCard mode='list' mat={mat}/>
                                                 </ListGroupItem>
-                                        )}
+                                        ) : '' : ''}
                                     </ListGroup>
                                 </Container>
                             </Col>
@@ -108,7 +108,7 @@ class SetProperties extends Component {
                             <CardColumns className='white p-2' style={{
                                 boxShadow: '0 0 5px 2px rgba(0,0,0,0.2) inset'
                             }}>
-                                {this.state.props ? this.state.props.settings.map((setting, id) =>
+                                {this.state.props ? this.state.props ? this.state.props.settings > 0 ? this.state.props.settings.map((setting, id) =>
                                     <Card className='dark text-white' key={id}>
                                         <Card.Body>
                                             <Card.Title>{setting.title}</Card.Title>
@@ -128,6 +128,7 @@ class SetProperties extends Component {
                                         </Card.Body>
                                     </Card>
                                 ) : ''
+                                    : '' : ''
                                 }
                             </CardColumns>
                         </Container>
