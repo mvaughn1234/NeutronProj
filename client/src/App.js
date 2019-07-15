@@ -12,105 +12,69 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            pages: {
-                setProps: {
-                    title: 'Set Properties',
-                    url: '/set_properties',
-                    key: 'props'
-                },
-                genData: {
-                    title: 'Generate Data',
-                    url: '/gen_data',
-                    key: 'gen',
-                    runButton: 'Generate Data'
-                },
-                analyze: {
-                    title: 'Analyze',
-                    url: '/analyze',
-                    key: 'analyze',
-                    runButton: 'Analyze Data'
-                }
-            },
-            props: [],
-            updated: false
+            currentView: '',
+            runButtonPhrase: '',
+            runButtonActivated: false,
+            settings: [],
         };
-        this.changeProps = this.changeProps.bind(this);
+        this.changeSettings = this.changeSettings.bind(this);
         this.createProps = this.createProps.bind(this);
-        this.initData = this.initData.bind(this);
+        this.initSettings = this.initSettings.bind(this);
         this.printProps = this.printProps.bind(this);
+        this.changeButtonPhrase = this.changeButtonPhrase.bind(this);
+        this.changeButtonState = this.changeButtonState.bind(this);
     }
 
-    changeProps(props) {
-        this.setState({props: props, updated: true});
+    changeSettings(settings) {
+        this.setState({settings});
     }
 
-    initData(){
-        console.log('init data');
-        axios.get('/props').then(res => res.data).then(data => data[0] ? this.setState({props: data[0]}) : this.createProps());
+    changeButtonPhrase(runButtonPhrase) {
+        this.setState({runButtonPhrase});
+    }
+
+    changeButtonState(runButtonActivated) {
+        this.setState({runButtonActivated});
+    }
+
+    initSettings() {
+        axios.get('/settings')
+            .then(res => res.data)
+            .then(data => this.setState({props: data[0]}));
     }
 
     componentDidMount() {
-        this.initData();
+        console.log('app mount');
+        this.initSettings();
     }
 
-    printProps(){
-        console.log(this.state.props);
-    }
-
-    createProps() {
-        const tempProps = {
-            props:
-                {
-                    matList: [{name: 'tin', installed: true},
-                        {name: 'moly', installed: true},
-                        {name: 'graphite', installed: true},
-                        {name: 'bh303', installed: true},
-                        {name: 'beryllium', installed: true}],
-                    settings: [
-                        {
-                            title: 'Set Scale',
-                            description: 'temp',
-                            input: 'Button',
-                            options: ['Base10', 'Log'],
-                            currentValue: 'Base10'
-                        },
-                        {
-                            title: 'Set Scale2',
-                            description: 'temp',
-                            input: 'Button',
-                            options: ['Base10', 'Log'],
-                            currentValue: 'Base10'
-                        },
-                        {
-                            title: 'Set Scale3',
-                            description: 'temp',
-                            input: 'Button',
-                            options: ['Base10', 'Log'],
-                            currentValue: 'Base10'
-                        }
-                    ]
-                }
-        };
-        this.changeProps(tempProps);
-        axios.post('/props/set', tempProps)
-            .catch(err => console.log(`err: ${err}`));
+    printProps() {
+        console.log(this.state.settings);
     }
 
     render() {
         return (
             <Router>
                 <Container fluid className='p-0 m-0 grayB4' style={{border: 'none'}}>
-                    <Header pages={this.state.pages}/>
-                    <Route path={this.state.pages.setProps.url}
-                           render={props => <SetProperties  url={this.state.pages.setProps.url}
-                                                           props={this.state.props} changeProps={this.changeProps}
-                                                           initData={this.initData}/>}/>
-                    <Route path={this.state.pages.genData.url}
-                           render={props => <GenerateData  url={this.state.pages.genData.url}
-                                                          props={this.state.props} printProps={this.printProps} initData={this.initData}/>}/>
-                    <Route path={this.state.pages.analyze.url}
-                           render={props => <AnalyzeData  url={this.state.pages.analyze.url}
-                                                         props={this.state.props} initData={this.initData}/>}/>
+                    <Header global={this.state}/>
+                    <Route path={'/settings'}
+                           render={props => <SetProperties  {...props}
+                                                            global={this.state}
+                                                            changeSettings={this.changeSettings}
+                                                            changeButtonState={this.changeButtonState()}
+                                                            changeButtonPhrase={this.changeButtonPhrase}/>}/>
+                    <Route path={'/gen_data'}
+                           render={props => <GenerateData {...props}
+                                                          global={this.state}
+                                                          changeSettings={this.changeSettings}
+                                                          changeButtonState={this.changeButtonState()}
+                                                          changeButtonPhrase={this.changeButtonPhrase}/>}/>
+                    <Route path={'/analyze'}
+                           render={props => <AnalyzeData  {...props}
+                                                          global={this.state}
+                                                          changeSettings={this.changeSettings}
+                                                          changeButtonState={this.changeButtonState()}
+                                                          changeButtonPhrase={this.changeButtonPhrase}/>}/>
                 </Container>
             </Router>
         );

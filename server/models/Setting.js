@@ -10,7 +10,7 @@ const Mat = require('./Mat');
 //     numBins: {type: Number, min: 3, max: 30, default: 30},
 // }
 
-const settingSchema = new Schema({
+const SubSettingSchema = new Schema({
     title: {type: String, default: 'Default Prop:', unique: true},
     description: {type: String, default: 'Default Description:'},
     input: {type: String, default: 'Button'},
@@ -18,10 +18,10 @@ const settingSchema = new Schema({
     currentValue: {}
 });
 
-const PropsSchema = new Schema({
+const SettingSchema = new Schema({
     matList: [Mat.schema],
-    settings: [settingSchema]
+    settings: [SubSettingSchema]
 });
 
-const Props = mongoose.model('props', PropsSchema);
-module.exports = Props;
+const Setting = mongoose.model('setting', SettingSchema);
+module.exports = Setting;

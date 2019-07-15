@@ -10,7 +10,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 
 // Models
-const Props = require('./models/Props');
+const Props = require('./models/Setting');
 
 // To satisfy error connecting to db
 require('events').EventEmitter.prototype._maxListeners = 100;
@@ -19,7 +19,7 @@ require('events').EventEmitter.prototype._maxListeners = 100;
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const matDBRouter = require('./routes/api/v1/matDB');
-const propsRouter = require('./routes/api/v1/props');
+const propsRouter = require('./routes/api/v1/setting');
 const configRouter = require('./routes/api/v1/config');
 
 const app = express();

@@ -7,60 +7,14 @@ import {CardColumns, Card} from 'react-bootstrap';
 import axios from 'axios';
 
 class SetProperties extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {props: {matList: [''], settings: ['']}};
-        this.createProps = this.createProps.bind(this);
-        this.setProps = this.setProps.bind(this);
-    }
+    // constructor(props) {
+    //     super(props);
+    //     // this.state = {props: {matList: [''], settings: ['']}};
+    // }
 
-    setProps(props) {
-        this.setState({props});
-        this.props.changeProps(props);
-    }
-
-    componentDidMount() {
-        axios.get('/props').then(res => res.data).then(data => data[0] ? this.setProps(data[0]) : this.createProps());
-    }
-
-    createProps() {
-        const tempProps = {
-            props:
-                {
-                    matList: [{name: 'tin', installed: true},
-                        {name: 'moly', installed: true},
-                        {name: 'graphite', installed: true},
-                        {name: 'bh303', installed: true},
-                        {name: 'beryllium', installed: true}],
-                    settings: [
-                        {
-                            title: 'Set Scale',
-                            description: 'temp',
-                            input: 'Button',
-                            options: ['Base10', 'Log'],
-                            currentValue: 'Base10'
-                        },
-                        {
-                            title: 'Set Scale2',
-                            description: 'temp',
-                            input: 'Button',
-                            options: ['Base10', 'Log'],
-                            currentValue: 'Base10'
-                        },
-                        {
-                            title: 'Set Scale3',
-                            description: 'temp',
-                            input: 'Button',
-                            options: ['Base10', 'Log'],
-                            currentValue: 'Base10'
-                        }
-                    ]
-                }
-        };
-        this.setProps(tempProps);
-        axios.post('/props/set', tempProps)
-            .catch(err => console.log(`err: ${err}`));
-    }
+    // componentDidMount() {
+    //     axios.get('/props').then(res => res.data).then(data => data[0] ? this.setProps(data[0]) : this.createProps());
+    // }
 
     render() {
         return (
@@ -90,7 +44,7 @@ class SetProperties extends Component {
                                                overflow: 'auto',
                                            }}>
                                     <ListGroup className='p-0 m-0 list-group-flush'>
-                                        {this.state.props? this.state.props.matList > 0 ? this.state.props.matList.map((mat) =>
+                                        {this.state.props? this.props.global > 0 ? this.state.props.matList.map((mat) =>
                                             mat.name === 'Vacuum' ? '' :
                                                 <ListGroupItem className='px-0 py-2' key={mat._id}>
                                                     <MatCard mode='list' mat={mat}/>

@@ -1,10 +1,10 @@
 const express = require('express');
-const propsRouter = express.Router();
-const Props = require('./../../../models/Props');
-const propsController = require('./../../../controllers/propsController');
+const settingRouter = express.Router();
+const Setting = require('../../../models/Setting');
+const settingController = require('../../../controllers/settingController');
 
-propsRouter.use('/', (req, res, next)=>{
-    console.log("Props router start");
+settingRouter.use('/', (req, res, next)=>{
+    console.log("Setting router start");
 
     //Request vs Params parameters
     //If you want to identify a resource, you should use Path Variable.
@@ -20,7 +20,7 @@ propsRouter.use('/', (req, res, next)=>{
     next();
 });
 
-propsRouter.route('/').get(propsController.getProps);
-propsRouter.route('/set').post(propsController.setProps);
+settingRouter.route('/').get(settingController.getSetting);
+settingRouter.route('/set').post(settingController.setSetting);
 
-module.exports = propsRouter;
+module.exports = settingRouter;
