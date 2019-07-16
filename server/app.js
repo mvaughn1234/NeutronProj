@@ -60,7 +60,10 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-mongoose.connect('mongodb://localhost:27017/NeutronProj', {useNewUrlParser: true});
+const dbuser = 'dbuser';
+const dbpass = 'Password';
+
+mongoose.connect(`mongodb+srv://${dbuser}:${dbpass}@cluster0-zehp8.mongodb.net/test?retryWrites=true&w=majority`, {useNewUrlParser: true});
 
 let connection = mongoose.connection;
 connection.on('connected',() => console.log('connected to db'));
