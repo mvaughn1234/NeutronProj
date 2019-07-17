@@ -24,6 +24,6 @@ configRouter.route('/:id').get(configController.getConfig);
 configRouter.route('/new').post(configController.addConfig);
 configRouter.route('/:id/edit').put(configController.editConfig);
 configRouter.route('/:id/delete').delete(configController.deleteConfig);
-configRouter.route('/:id/run').delete(configController.runConfig);
+configRouter.route('/:id/run').get(configController.runConfig);
 
 module.exports = configRouter;

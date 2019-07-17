@@ -2,38 +2,80 @@ const Setting = require('../models/Setting');
 
 const checkSetting = (settings) => {
     if (settings.length === 0){
-        const Setting = new Setting({
-            matList: [{name: 'tin', installed: true},
-                {name: 'moly', installed: true},
-                {name: 'graphite', installed: true},
-                {name: 'bh303', installed: true},
-                {name: 'beryllium', installed: true}],
+        const setting = new Setting({
+            matList: [{name: 'tin', installed: true, color:'#6dbf88'},
+                {name: 'moly', installed: true, color:'#b28034'},
+                {name: 'graphite', installed: true, color:'#b7b7b7'},
+                {name: 'bh303', installed: true, color:'#bf5bac'},
+                {name: 'beryllium', installed: true, color:'#4673be'}],
             settings: [
                 {
                     title: 'Set Scale',
-                    description: 'temp',
+                    description: 'Scale to partition energy bins by',
                     input: 'Button',
                     options: ['Base10', 'Log'],
-                    currentValue: 'Base10'
+                    currentValue: 'Log'
                 },
                 {
-                    title: 'Set Scale2',
-                    description: 'temp',
-                    input: 'Button',
-                    options: ['Base10', 'Log'],
-                    currentValue: 'Base10'
+                    title: 'Energy Min',
+                    description: 'Minimal energy input to geant simulations.',
+                    input: 'energy1',
+                    options: [],
+                    currentValue: '3.0'
                 },
                 {
-                    title: 'Set Scale3',
-                    description: 'temp',
+                    title: 'Energy Max',
+                    description: 'Maximal energy input to geant simulations.',
+                    input: 'energy2',
+                    options: [],
+                    currentValue: '14.1'
+                },
+                {
+                    title: 'Num Bins',
+                    description: 'Number of partitions on energy scale.',
+                    input: 'number',
+                    options: [],
+                    currentValue: '30'
+                },
+                {
+                    title: 'Num Processes',
+                    description: 'Maximum number of processes on carbon that should be used',
+                    input: 'number',
+                    options: [],
+                    currentValue: '10'
+                },
+                {
+                    title: 'Precision',
+                    description: 'Number of neutrons fired during simulation',
+                    input: 'number',
+                    options: [],
+                    currentValue: '1000'
+                },
+                {
+                    title: 'Data Directory',
+                    description: 'Directory to log data to.',
+                    input: 'Path',
+                    options: [],
+                    currentValue: './data/data'
+                },
+                {
+                    title: 'Log Directory',
+                    description: 'Directory to log logfiles to.',
+                    input: 'Path',
+                    options: [],
+                    currentValue: './data/log'
+                },
+                {
+                    title: 'Geant Location',
+                    description: 'Run geant on carbon or locally.',
                     input: 'Button',
-                    options: ['Base10', 'Log'],
-                    currentValue: 'Base10'
-                }
+                    options: ['Local','Carbon'],
+                    currentValue: 'Carbon'
+                },
             ]
         });
-        Setting.save();
-        return Setting;
+        setting.save();
+        return setting;
     }else{
         return settings;
     }

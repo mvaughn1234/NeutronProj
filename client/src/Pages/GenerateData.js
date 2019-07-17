@@ -16,7 +16,7 @@ class GenerateData extends Component {
 
     render() {
         return (
-            <Container fluid>
+            <Container>
                 <Row>
                     <Col className='col-2 p-0 gray5' variant='dark'>
                         <Nav defaultActiveKey="gen1" className="flex-column" style={{margin: '30px 0 0 0'}}>
@@ -57,13 +57,12 @@ class GenerateData extends Component {
                     <Col className='col-8 p-0'
                         // style={{boxShadow: '0 0 2px 2px rgba(0,0,0,0.2) inset'}}
                     >
-                        {console.log(this.props.global)}
                         <ul className='m-0 p-0' style={{display: 'flex'}}>
                             {this.props.global.settings.matList ? this.props.global.settings.matList.length > 0 ?
                                 this.props.global.settings.matList.map((mat, index) =>
                                     mat.name !== 'Vacuum' ?
                                         <li className='mx-1 my-1 list-unstyled d-flex align-items-stretch' key={index}><MatCard
-                                            mat={mat} mode={'card'} updateGenList={this.updateGenList}/></li>
+                                            mat={mat} len={{single: true, min: 10, max: 100, part: 30}} mode={'card'} updateGenList={this.updateGenList}/></li>
                                         : ''
                                 )
                                 : ''

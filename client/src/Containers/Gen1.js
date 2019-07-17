@@ -6,14 +6,23 @@ class Gen1 extends Component {
     constructor(props) {
         super(props);
         this.genEntries = this.genEntries.bind(this);
+        this.singleVacuum = this.singleVacuum.bind(this);
     }
 
     genEntries(index,mat) {
         // this.props.ge
     }
 
+    singleVacuum(){
+        let item = this.props.global.genListSingle.find((genItem) => genItem.mat.name === 'Vacuum');
+        if(item){
+            return item.html;
+        }else{
+            return '';
+        }
+    }
+
     render() {
-        console.log('gen1: ', this.props.global.genList);
         return (
             <Container fluid className='gray1'>
                 <Row>
@@ -28,7 +37,8 @@ class Gen1 extends Component {
                             <Row>
                                 <Col className='col-12 overflow-auto'>
                                     <ul className='m-0 p-0 d-flex' style={{display: 'flex'}}>
-                                        {this.props.global.genList}
+                                        {this.props.global.genListSingle.filter((genItem) => genItem.mat.name !== 'Vacuum').map(genItem => genItem.html)}
+                                        {this.singleVacuum()}
                                     </ul>
                                 </Col>
                             </Row>
@@ -43,11 +53,11 @@ class Gen1 extends Component {
                         <Container className='my-2 blue6 text-light'
                                    style={{boxShadow: '0 1px 2px 1px rgba(0,0,0,0.2) inset'}}>
                             <ul className='m-0 p-0'>
-                                <Row><Col>awefawef</Col></Row>
-                                <Row><Col>awefawef</Col></Row>
-                                <Row><Col>awefawef</Col></Row>
-                                <Row><Col>awefawef</Col></Row>
-                                <Row><Col>awefawef</Col></Row>
+                                {/*<Row><Col>awefawef</Col></Row>*/}
+                                {/*<Row><Col>awefawef</Col></Row>*/}
+                                {/*<Row><Col>awefawef</Col></Row>*/}
+                                {/*<Row><Col>awefawef</Col></Row>*/}
+                                {/*<Row><Col>awefawef</Col></Row>*/}
                             </ul>
                         </Container>
                     </Col>
@@ -55,11 +65,11 @@ class Gen1 extends Component {
                         <Container className='my-2 blue6 text-light'
                                    style={{boxShadow: '0 1px 2px 1px rgba(0,0,0,0.2) inset'}}>
                             <ul className='m-0 p-0'>
-                                <Row><Col>awefawef</Col></Row>
-                                <Row><Col>awefawef</Col></Row>
-                                <Row><Col>awefawef</Col></Row>
-                                <Row><Col>awefawef</Col></Row>
-                                <Row><Col>awefawef</Col></Row>
+                                {/*<Row><Col>awefawef</Col></Row>*/}
+                                {/*<Row><Col>awefawef</Col></Row>*/}
+                                {/*<Row><Col>awefawef</Col></Row>*/}
+                                {/*<Row><Col>awefawef</Col></Row>*/}
+                                {/*<Row><Col>awefawef</Col></Row>*/}
                             </ul>
                         </Container>
                     </Col>

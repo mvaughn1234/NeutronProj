@@ -4,9 +4,11 @@ const Schema = mongoose.Schema;
 const Mat = require('./Mat');
 
 let ConfigSchema = new Schema({
+    mode: {type: String, required: true},
     matList: [Mat.schema],
-    eIn: {type: Number, required: true},
-    runSet: {type: String, required: true}
+    lenList: [{type: Object, required: true}],
+    flags: [{type: String, required: false}],
+    runSet: {type: String, required: false}
 });
 
 module.exports = Config = mongoose.model('config', ConfigSchema);

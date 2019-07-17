@@ -8,16 +8,19 @@ import Tooltip from 'react-bootstrap/Tooltip'
 import Overlay from 'react-bootstrap/Overlay'
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
 import {Button, ButtonToolbar} from 'react-bootstrap';
+import {noop} from "@babel/types";
 
 class MatCard extends Component {
     constructor(props) {
         super(props);
-        this.state = {lengthInput: false};
+        this.state = {lengthInput: false, min: '', max: '', part: '', showMore: false};
         this.styles = this.styles.bind(this);
         this.onDragOver = this.onDragOver.bind(this);
         this.onDragStart = this.onDragStart.bind(this);
         this.onDrop = this.onDrop.bind(this);
         this.trackLengthText = this.trackLengthText.bind(this);
+        this.setLength = this.setLength.bind(this);
+        this.expandLenInput = this.expandLenInput.bind(this);
     }
 
     styles(element) {
@@ -127,23 +130,24 @@ class MatCard extends Component {
                             });
                     case 'card' :
                         return {
-                            height: '20px',
-                            width: '20px',
+                            height: '15px',
+                            width: '15px',
                             margin: 'auto',
                             padding: '0',
                             background: `${this.props.mat.color}`,
                             borderRadius: '50%',
-                            display: 'block'
+                            display: 'block',
                         };
                     case 'list':
                         return {
-                            height: '20px',
-                            width: '20px',
+                            height: '10px',
+                            width: '10px',
                             margin: '0',
                             padding: '0',
                             background: `${this.props.mat.color}`,
                             borderRadius: '50%',
-                            display: 'block'
+                            display: 'inline-flex',
+                            verticalAlign: 'middle'
                         };
                     default:
                         return {};
@@ -154,7 +158,6 @@ class MatCard extends Component {
     }
 
     onDragStart = (event, mat) => {
-        console.log('dragstart: ', mat);
         event.dataTransfer.setData("mat", JSON.stringify(mat));
     };
 
@@ -165,7 +168,6 @@ class MatCard extends Component {
     onDrop = (event, mode) => {
         event.preventDefault();
         let mat = JSON.parse(event.dataTransfer.getData("mat"));
-        console.log('drop3: ', mat);
         this.props.updateGenList(this.props.indx, mat);
     };
 
@@ -177,10 +179,48 @@ class MatCard extends Component {
         }
     }
 
+    expandLenInput() {
+        let shallow = this.props.len;
+        let lenTemp = {single: shallow.single, min: shallow.min, max: shallow.max, part: shallow.part};
+        lenTemp.single = false;
+        this.props.updateGenList(this.props.indx, this.props.mat, lenTemp)
+        this.setState({showMore: true})
+    }
+
+    setLength(e, inputField) {
+        console.log(this.props);
+        let shallow = this.props.len;
+        let lenTemp = {single: shallow.single, min: shallow.min, max: shallow.max, part: shallow.part};
+        switch (inputField) {
+            case 1:
+                lenTemp.min = e.target.value;
+                this.setState({min: e.target.value});
+                break;
+            case 2:
+                lenTemp.max = e.target.value;
+                lenTemp.single = false;
+                this.setState({min: e.target.value});
+                break;
+            case 3:
+                lenTemp.part = e.target.value;
+                lenTemp.single = false;
+                this.setState({min: e.target.value});
+                break;
+            default:
+                noop();
+                break;
+        }
+        this.props.updateGenList(this.props.indx, this.props.mat, lenTemp)
+    }
+
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
+        return this.props.mode !== 'card';
+    }
+
     render() {
         const {mode} = this.props;
         const {mat} = this.props;
-        console.log(`mat: ${mat}`);
+        console.log('MatCard---\nprops:', this.props);
 
         return (
             <Container className='light'
@@ -232,21 +272,72 @@ class MatCard extends Component {
                                 <Row className='m-0 p-0'>
                                     <Col className='col-1 p-0'/>
                                     <Col className='col-10 p-0'>
-                                        <OverlayTrigger trigger="click" placement="right"
-                                                        overlay={
-                                                            <Popover id="popover-basic">
-                                                                <Popover.Title as="h3">Popover right</Popover.Title>
-                                                                <Popover.Content>
-                                                                    And here's some <strong>amazing</strong> content.
-                                                                    It's very engaging.
-                                                                    right?
-                                                                </Popover.Content>
-                                                            </Popover>
-                                                        }
-                                        >
-                                            <Button variant="success">Click me to see</Button>
-                                        </OverlayTrigger>
-
+                                        <Form.Group>
+                                            <InputGroup>
+                                                <InputGroup.Prepend>
+                                                    <InputGroup.Text className={'p-1'}
+                                                                     id="lenPrepend1">{this.state.showMore ? 'Min:' : 'Len:'}</InputGroup.Text>
+                                                </InputGroup.Prepend>
+                                                <Form.Control
+                                                    // className={'m-0 p-0'}
+                                                    className={'p-1'}
+                                                    type="text"
+                                                    placeholder="10"
+                                                    aria-describedby="lenPrepend1"
+                                                    name="len1"
+                                                    onChange={(e) => this.setLength(e, 1)}
+                                                    value={this.props.len.min}
+                                                    // isInvalid={!!errors.username}
+                                                />
+                                                {/*<Form.Control.Feedback type="invalid">*/}
+                                                {/*    {errors.username}*/}
+                                                {/*</Form.Control.Feedback>*/}
+                                            </InputGroup>
+                                            {this.state.showMore ?
+                                                <Form.Group>
+                                                    <InputGroup>
+                                                        <InputGroup.Prepend>
+                                                            <InputGroup.Text className={'p-1'}
+                                                                             id="lenPrepend1">Max:</InputGroup.Text>
+                                                        </InputGroup.Prepend>
+                                                        <Form.Control
+                                                            className={'p-1'}
+                                                            type="text"
+                                                            placeholder="10"
+                                                            aria-describedby="lenPrepend1"
+                                                            name="len1"
+                                                            onChange={(e) => this.setLength(e, 2)}
+                                                            value={this.props.len.max}
+                                                            // isInvalid={!!errors.username}
+                                                        />
+                                                        {/*<Form.Control.Feedback type="invalid">*/}
+                                                        {/*    {errors.username}*/}
+                                                        {/*</Form.Control.Feedback>*/}
+                                                    </InputGroup>
+                                                    <InputGroup>
+                                                        <InputGroup.Prepend>
+                                                            <InputGroup.Text className={'p-1'}
+                                                                             id="lenPrepend1">Part:</InputGroup.Text>
+                                                        </InputGroup.Prepend>
+                                                        <Form.Control
+                                                            className={'p-1'}
+                                                            type="text"
+                                                            placeholder="10"
+                                                            aria-describedby="lenPrepend1"
+                                                            name="len1"
+                                                            onChange={(e) => this.setLength(e, 3)}
+                                                            value={this.props.len.part}
+                                                            // isInvalid={!!errors.username}
+                                                        />
+                                                        {/*<Form.Control.Feedback type="invalid">*/}
+                                                        {/*    {errors.username}*/}
+                                                        {/*</Form.Control.Feedback>*/}
+                                                    </InputGroup>
+                                                </Form.Group>
+                                                :
+                                                <Button onClick={() => this.expandLenInput()}>Range</Button>
+                                            }
+                                        </Form.Group>
                                     </Col>
                                     <Col className='col-1 p-0'/>
                                 </Row>
@@ -257,10 +348,10 @@ class MatCard extends Component {
                             <Row className='my-1'><Col className='text-center'><img draggable={false}
                                                                                     src={'https://mdbootstrap.com/img/svg/hamburger7.svg?color=000000'}
                                                                                     style={{
-                                                                                        height: 'auto',
-                                                                                        width: 'auto'
+                                                                                        height: '20px',
+                                                                                        width: '20px'
                                                                                     }}/></Col></Row>
-                            : <Row><Container><br/><br/><br/></Container></Row>
+                            : mode === 'list' ? '' : <Row><Container><br/><br/><br/></Container></Row>
                 }
             </Container>
         );

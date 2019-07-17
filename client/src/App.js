@@ -18,7 +18,8 @@ class App extends Component {
             runButtonActivated: false,
             settings: [],
             numGeantSpots: 5,
-            genList: []
+            genListSingle: [],
+            configs: [],
         };
         this.changeSettings = this.changeSettings.bind(this);
         this.initSettings = this.initSettings.bind(this);
@@ -29,29 +30,51 @@ class App extends Component {
         this.runAnalysis = this.runAnalysis.bind(this);
         this.updateGenList = this.updateGenList.bind(this);
         this.genListRemove = this.genListRemove.bind(this);
+
     }
 
-    updateGenList(index, mat) {
-        console.log('updating: ', index, mat);
-        let temp = this.state.genList.slice(0, this.state.numGeantSpots);
-        temp[index] = <li className='mx-1 my-1 list-unstyled d-flex align-items-stretch' key={index}><MatCard
-            mat={mat} indx={index} mode='entry' updateGenList={this.updateGenList} genListRemove={this.genListRemove}/>
-        </li>;
-        console.log('updated: ', temp);
-        this.setState({genList: temp});
+    updateGenList(index, mat, len) {
+        console.log('updating: ', index, mat, len);
+        let temp = this.state.genListSingle.slice(0, this.state.numGeantSpots);
+        let tempLen = len ? len : {single: true, min: 10, max: 100, part: 30};
+        temp[index] = {mat: mat, len: tempLen, html: <li className='mx-1 my-1 list-unstyled d-flex align-items-stretch' key={index}><MatCard
+            mat={mat} indx={index} len={tempLen} mode='entry' updateGenList={this.updateGenList} genListRemove={this.genListRemove}/>
+        </li>};
+        console.log('updated add: ', temp);
+        this.setState({genListSingle: temp});
     }
 
     genListRemove(index) {
-        let temp = this.state.genList.slice(0, this.state.numGeantSpots);
-        temp[index] = <li className='mx-1 my-1 list-unstyled d-flex align-items-stretch' key={index}><MatCard
-            mat={{name: `Vacuum`, color: '#000000', installed: true}} indx={index} mode='entry' updateGenList={this.updateGenList} genListRemove={this.genListRemove}/>
-        </li>;
-        console.log('updated: ', temp, index);
-        this.setState({genList: temp});
+        let temp = this.state.genListSingle.slice();
+        temp[index] = {mat: {name: `Vacuum`, color: '#000000', installed: true}, len: {single: true, min: 10, max: 100, part: 30}, html: <li className='mx-1 my-1 list-unstyled d-flex align-items-stretch' key={index}><MatCard
+            mat={{name: `Vacuum`, color: '#000000', installed: true}} indx={index} len={{single: true, min: 10, max: 100, part: 30}} mode='entry' updateGenList={this.updateGenList} genListRemove={this.genListRemove}/>
+        </li>};
+        console.log('updated remove: ', temp, index);
+        this.setState({genListSingle: temp});
     }
 
-    generateData() {
 
+    generateData() {
+        let addConfig = new Promise((result,error) => {
+            let currentConfigs = this.state.configs.slice();
+            let newConfig = {
+                mode: 'single',
+                matList: this.state.genListSingle.map(item => item.mat),
+                lenList: this.state.genListSingle.map(item => item.len),
+                flags: ['-together']
+            };
+            console.log('New Config: ', newConfig);
+            axios.post(`http://localhost:5000/api/v1/config/new`, newConfig)
+                .then(res => res.data)
+                .then(data => {this.setState({configs: [...currentConfigs,data]}); result(data._id);})
+                .catch(err => {console.log(err); error(err)});
+        });
+        addConfig.then(id => {
+            axios.get(`http://localhost:5000/api/v1/config/${id}/run`)
+                .then(res => res.data)
+                .then(data => console.log('Generate Data Res: ', data))
+                .catch(err => console.log(err));
+        })
     };
 
     runAnalysis() {
@@ -84,6 +107,7 @@ class App extends Component {
 
     changeButtonState(runButtonActivated) {
         this.setState({runButtonActivated});
+        this.generateData();
     };
 
     initSettings() {
@@ -93,11 +117,11 @@ class App extends Component {
         let i = 0;
         let list = [];
         for (i; i < this.state.numGeantSpots; i++) {
-            list.push(<li className='mx-1 my-1 list-unstyled d-flex align-items-stretch' key={i}><MatCard
-                mat={{name: `Vacuum`, color: '#000000', installed: true}} indx={i} mode='entry'
-                updateGenList={this.updateGenList} genListRemove={this.genListRemove}/></li>);
+            list.push({mat: {name: `Vacuum`, color: '#000000', installed: true}, len: {single: true, min: 10, max: 100, part: 30}, html: <li className='mx-1 my-1 list-unstyled d-flex align-items-stretch' key={i}><MatCard
+                mat={{name: `Vacuum`, color: '#000000', installed: true}} indx={i} len={{single: true, min: 10, max: 100, part: 30}} mode='entry'
+                updateGenList={this.updateGenList} genListRemove={this.genListRemove}/></li>});
         }
-        this.setState({genList: list});
+        this.setState({genListSingle: list});
     };
 
     componentDidMount() {
@@ -126,7 +150,7 @@ class App extends Component {
                     <Route path={'/gen_data'}
                            render={props => <GenerateData {...props}
                                                           global={this.state}
-                                                          setGenList={this.setGenList}
+                                                          updateGenList={this.updateGenList}
                                                           changeSettings={this.changeSettings}
                                                           changeButtonState={this.changeButtonState}/>}/>
                     <Route path={'/analyze'}
