@@ -41,7 +41,7 @@ const checkSetting = (settings) => {
 
 exports.getSetting = (req,res) => {
     Setting.find()
-        .then(settings => checkSetting(settings))
+        .then(setting => checkSetting(setting))
         .then(setting => res.json(setting));
 };
 

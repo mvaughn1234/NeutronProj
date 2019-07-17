@@ -21,6 +21,7 @@ body {background: #1e1e2f}
 .purple {background: #8965e0; border: 1px solid #8965e0}
 .pink {background: #f3a4b5; border: 1px solid #f3a4b5}
 .red {background: #f5365c; border: 1px solid #f5365c}
+.red2 {background: #951014; border: 1px solid #951014}
 .orange {background: #fb6340; border: 1px solid #fb6340}
 .yellow {background: #ffd600; border: 1px solid #ffd600}
 .green {background: #2dce89; border: 1px solid #2dce89}
@@ -96,5 +97,9 @@ body {background: #1e1e2f}
 .text-default {color: #344675}
 .text-white {color: #ffffff}
 .text-darkest {color: black}
+
+.card-btn:hover, .card-btn:active, .card-btn:focus{
+    background: #6c757d !important;
+}
 
 .disableScrollBar::-webkit-scrollbar {width: 0 !important; height: 0 !important}

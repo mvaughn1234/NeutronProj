@@ -8,6 +8,7 @@ require 'bigdecimal'
 @sizes = []
 @erange = false
 @each = false # True: Test each material at each energy and again at each length
+@together = false # True: Test the materials in the configuration listed in the input
 @settings = [] # Will hold each test configuration (some mat, @ some energy, @ some length)
 @set
 @clean = false
@@ -113,6 +114,9 @@ def setup(input)
     end
     if (m = flag.match(/^-?(all.*|each.*)$/i))
       @each = true
+      end
+    if (m = flag.match(/^-?(together)$/i))
+      @together = true
     end
     if (m = flag.match(/^-?cl.*$/i))
       @clean = true

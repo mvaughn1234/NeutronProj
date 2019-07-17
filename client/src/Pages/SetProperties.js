@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Container, Row, Col, FormControl} from "react-bootstrap";
 import MatCard from "../Components/MatCard/MatCard";
 import {ListGroup, ListGroupItem} from "react-bootstrap";
-import {FormGroup, FormLabel, FormText, Form, ButtonGroup, Button, InputGroup} from "react-bootstrap";
+import {FormGroup, FormLabel, FormText, Form, ButtonGroup, Button, InputGroup, ToggleButtonGroup, ToggleButton, ButtonToolbar} from "react-bootstrap";
 import {CardColumns, Card} from 'react-bootstrap';
 import axios from 'axios';
 
@@ -15,6 +15,8 @@ class SetProperties extends Component {
     // componentDidMount() {
     //     axios.get('/props').then(res => res.data).then(data => data[0] ? this.setProps(data[0]) : this.createProps());
     // }
+
+
 
     render() {
         return (
@@ -44,7 +46,7 @@ class SetProperties extends Component {
                                                overflow: 'auto',
                                            }}>
                                     <ListGroup className='p-0 m-0 list-group-flush'>
-                                        {this.state.props? this.props.global > 0 ? this.state.props.matList.map((mat) =>
+                                        {this.props.global.settings ? this.props.global.settings > 0 ? this.props.global.settings.matList.map((mat) =>
                                             mat.name === 'Vacuum' ? '' :
                                                 <ListGroupItem className='px-0 py-2' key={mat._id}>
                                                     <MatCard mode='list' mat={mat}/>
@@ -62,18 +64,19 @@ class SetProperties extends Component {
                             <CardColumns className='white p-2' style={{
                                 boxShadow: '0 0 5px 2px rgba(0,0,0,0.2) inset'
                             }}>
-                                {this.state.props ? this.state.props ? this.state.props.settings > 0 ? this.state.props.settings.map((setting, id) =>
+                                {console.log(this.props.global.settings.settings)}
+                                {this.props.global.settings ? this.props.global.settings.settings ? this.props.global.settings.settings.length > 0 ? this.props.global.settings.settings.map((setting, id) =>
                                     <Card className='dark text-white' key={id}>
                                         <Card.Body>
                                             <Card.Title>{setting.title}</Card.Title>
                                             <Card.Text>{setting.description}</Card.Text>
                                             <FormGroup>
                                                 {setting.input === 'Button' ?
-                                                    <ButtonGroup>
+                                                    <ToggleButtonGroup  type='radio' name='options' defaultValue={setting.currentValue}>
                                                         {setting.options.map((option, id2) =>
-                                                            <Button key={id2}>{option}</Button>
+                                                            <ToggleButton key={id2} value={option}>{option}</ToggleButton>
                                                         )}
-                                                    </ButtonGroup>
+                                                    </ToggleButtonGroup>
                                                     :
                                                     <FormText className={setting.options}
                                                               placeholder={setting.currentValue}/>
@@ -108,7 +111,7 @@ class SetProperties extends Component {
                             <Col>
                                 <Form>
                                     <FormGroup className='text-white'>
-                                        <FormControl className='mb-3' type='text' placeHolder='Setting Title'/>
+                                        <FormControl className='mb-3' type='text' placeholder='Setting Title'/>
                                         <Button className='btn-md p-auto m-auto'>Save Settings</Button>
                                     </FormGroup>
                                 </Form>
