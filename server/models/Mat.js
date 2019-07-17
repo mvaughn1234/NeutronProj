@@ -8,11 +8,12 @@ const MatSchema = new Schema({
     },
     installed: {
         type: Boolean,
-        default: false
+        default: false,
+        required: false
     },
     color: {
         type: String,
-        default: "#000000",
+        default: '#000000',
         required: false
     }
 });
