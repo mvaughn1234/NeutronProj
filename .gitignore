@@ -15,5 +15,9 @@ run?*.mac*
 plots/
 History
 results/
+<<<<<<< HEAD
 gui/
 build/
+=======
+gui/
+>>>>>>> 834ea8eab8393ba42f0a7b4110151049c9160f14

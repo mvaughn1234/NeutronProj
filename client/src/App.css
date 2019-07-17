@@ -1,0 +1,105 @@
+body {background: #1e1e2f}
+.darker {background: #0a0c0d; border: 1px solid #0a0c0d}
+.dark {background: #1e1e2f; border: 1px solid #1e1e2f}
+.green1 {background: #00f2c3; border: 1px solid #00f2c3}
+.green2 {background: #00e3b7; border: 1px solid #00e3b7}
+.green3 {background: #00cca4; border: 1px solid #00cca4}
+.green4 {background: #00bf9a; border: 1px solid #00bf9a}
+.green5 {background: #00b290; border: 1px solid #00b290}
+.blue1 {background: #11cdef; border: 1px solid #11cdef}
+.blue2 {background: #00bbff; border: 1px solid #00bbff}
+.blue3 {background: #0098f0; border: 1px solid #0098f0}
+.blue4 {background: #1d8cf8; border: 1px solid #1d8cf8}
+.blue5 {background: #0e84f8; border: 1px solid #0e84f8}
+.blue6 {background: #007bff; border: 1px solid #007bff}
+.blue6 {background: #21496f; border: 1px solid #21496f}
+.blue7 {background: #253c55; border: 1px solid #253c55}
+.blue9 {background: #202c49; border: 1px solid #202c49}
+.blue10 {background: #0c2646; border: 1px solid #0c2646}
+.blue11 {background: #141E30; border: 1px solid #141E30}
+.indigo {background: #5603ad; border: 1px solid #5603ad}
+.purple {background: #8965e0; border: 1px solid #8965e0}
+.pink {background: #f3a4b5; border: 1px solid #f3a4b5}
+.red {background: #f5365c; border: 1px solid #f5365c}
+.red2 {background: #951014; border: 1px solid #951014}
+.orange {background: #fb6340; border: 1px solid #fb6340}
+.yellow {background: #ffd600; border: 1px solid #ffd600}
+.green {background: #2dce89; border: 1px solid #2dce89}
+.cyan {background: #2bffc6; border: 1px solid #2bffc6}
+.white {background: #ffffff; border: 1px solid #ffffff}
+.gray1 {background: #e9e9e9; border: 1px solid #e9e9e9}
+.gray2 {background: #6c757d; border: 1px solid #6c757d}
+.gray3 {background: #343a40; border: 1px solid #343a40}
+.gray4 {background: #393b3e; border: 1px solid #393b3e}
+.gray5 {background: #333333; border: 1px solid #333333}
+.gray6 {background: #292929; border: 1px solid #292929}
+.grayB1 {background: #525f7f; border: 1px solid #525f7f}
+.grayB2 {background: #32325d; border: 1px solid #32325d}
+.grayB3 {background: #1a1e34; border: 1px solid #1a1e34}
+.grayB4 {background: #1e1e24; border: 1px solid #1e1e24}
+.lighter {background: #e9ecef; border: 1px solid #e9ecef}
+.primary {background: #e14eca; border: 1px solid #e14eca}
+.secondary {background: #f4f5f7; border: 1px solid #f4f5f7}
+.success {background: #00f2c3; border: 1px solid #00f2c3}
+.info {background: #1d8cf8; border: 1px solid #1d8cf8}
+.warning {background: #ff8d72; border: 1px solid #ff8d72}
+.danger {background: #fd5d93; border: 1px solid #fd5d93}
+.light {background: #c3c3c3; border: 1px solid #c3c3c3}
+.dark {background: #212529; border: 1px solid #212529}
+.default {background: #344675; border: 1px solid #344675}
+.white {background: #ffffff; border: 1px solid #ffffff}
+.darkest {background: black; border: 1px solid black}
+
+.text-darker { color: #0a0c0d}
+.text-dark {color: #1e1e2f}
+.text-green1 {color: #00f2c3}
+.text-green2 {color: #00e3b7}
+.text-green3 {color: #00cca4}
+.text-green4 {color: #00bf9a}
+.text-green5 {color: #00b290}
+.text-blue1 {color: #11cdef}
+.text-blue2 {color: #00bbff}
+.text-blue3 {color: #0098f0}
+.text-blue4 {color: #1d8cf8}
+.text-blue5 {color: #0e84f8}
+.text-blue6 {color: #007bff}
+.text-blue7 {color: #1f5da1}
+.text-blue8 {color: #202c49}
+.text-blue9 {color: #0c2646}
+.text-blue10 {color: #141E30}
+.text-indigo {color: #5603ad}
+.text-purple {color: #8965e0}
+.text-pink {color: #f3a4b5}
+.text-red {color: #f5365c}
+.text-orange {color: #fb6340}
+.text-yellow {color: #ffd600}
+.text-green {color: #2dce89}
+.text-cyan {color: #2bffc6}
+.text-white {color: #ffffff}
+.text-gray1 {color: #6c757d}
+.text-gray2 {color: #343a40}
+.text-gray3 {color: #393b3e}
+.text-gray4 {color: #2c2c2c}
+.text-gray5 {color: #1c1c1c}
+.text-grayB1 {color: #525f7f}
+.text-grayB2 {color: #32325d}
+.text-grayB3 {color: #1a1e34}
+.text-grayB4 {color: #1e1e24}
+.text-lighter {color: #e9ecef}
+.text-primary {color: #e14eca}
+.text-secondary {color: #f4f5f7}
+.text-success {color: #00f2c3}
+.text-info {color: #1d8cf8}
+.text-warning {color: #ff8d72}
+.text-danger {color: #fd5d93}
+.text-light {color: #adb5bd}
+.text-dark {color: #212529}
+.text-default {color: #344675}
+.text-white {color: #ffffff}
+.text-darkest {color: black}
+
+.card-btn:hover, .card-btn:active, .card-btn:focus{
+    background: #6c757d !important;
+}
+
+.disableScrollBar::-webkit-scrollbar {width: 0 !important; height: 0 !important}

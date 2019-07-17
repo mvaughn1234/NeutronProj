@@ -1,0 +1,35 @@
+{
+  "Mats": [
+    {
+      "name": "tin",
+      "alt": "",
+      "installed": true
+    },
+    {
+      "name": "molybdinum",
+      "alt": "moly",
+      "installed": true
+    },
+    {
+      "name": "bh303",
+      "alt": "",
+      "installed": true
+    },
+    {
+      "name": "beryllium",
+      "alt": "",
+      "installed": true
+    },
+    {
+      "name": "graphite",
+      "alt": "",
+      "installed": true
+    }
+  ],
+  "Scale": ["Log","Base10"],
+  "Precision": [1000,10000,1000],
+  "NumProcessors": [0,40,20],
+  "Length": [0,100],
+  "NumBins": [3,30,30],
+  "Energy": [0.003, 14.1]
+}
