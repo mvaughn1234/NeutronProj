@@ -63,10 +63,12 @@ exports.runConfig = (req,res) => {
                     const numBins = Number(settings.settings.filter(element => element.title === 'Num Bins')[0].currentValue);
                     const scale = settings.settings.filter(element => element.title === 'Set Scale')[0].currentValue;
                     console.log('made it here5');
-                    const energy = `-En:${eLow}-${eHigh}:${numBins}@${scale}`;
+                    const energy = `-En=${eLow}-${eHigh}:${numBins}@${scale}`;
                     const flags = config.flags.join(',');
                     console.log('made it here6');
                     try {
+                        let runPhrase = `ruby ${rb_gen_path_local} ${matList} ${lenList} ${energy} ${flags}`;
+                        console.log(runPhrase);
                         // const genData = spawn(`sshpass -p ${carbonPass} ssh ${carbonUser}@carbon444.umm.edu ruby ${rb_gen_path}`, [matList, lenList, energy, flags]);
                         const genData = spawn(`ruby ${rb_gen_path_local}`, [matList, lenList, energy, flags]);
                         genData.stdout.on('data', (data) => {
