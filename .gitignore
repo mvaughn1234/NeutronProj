@@ -1,0 +1,19 @@
+# Geant Run File #
+##################
+*.run
+run?*.mac*
+
+
+# Log #
+#######
+*.out
+.log
+*~
+
+# misc #
+########
+plots/
+History
+results/
+gui/
+build/
