@@ -37,8 +37,8 @@ class Gen1 extends Component {
                             <Row>
                                 <Col className='col-12 overflow-auto'>
                                     <ul className='m-0 p-0 d-flex' style={{display: 'flex'}}>
-                                        {this.props.global.genListSingle.filter((genItem) => genItem.mat.name !== 'Vacuum').map(genItem => genItem.html)}
                                         {this.singleVacuum()}
+                                        {this.props.global.genListSingle.filter((genItem) => genItem.mat.name !== 'Vacuum').map(genItem => genItem.html).reverse()}
                                     </ul>
                                 </Col>
                             </Row>

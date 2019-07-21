@@ -21,6 +21,7 @@ const usersRouter = require('./routes/users');
 const matDBRouter = require('./routes/api/v1/matDB');
 const propsRouter = require('./routes/api/v1/setting');
 const configRouter = require('./routes/api/v1/config');
+const energySetRouter = require('./routes/api/v1/energySet');
 
 const app = express();
 
@@ -43,6 +44,7 @@ app.use('/users', usersRouter);
 app.use('/api/v1/props', propsRouter);
 app.use('/api/v1/matDB', matDBRouter);
 app.use('/api/v1/config', configRouter);
+app.use('/api/v1/energySet', energySetRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
