@@ -114,7 +114,7 @@ class MatCard extends Component {
                         return (this.props.mat.name === 'Vacuum' ? {fontSize: '100px', color: 'black'} :
                             {
                                 fontSize: '100px',
-                                color: '#951014',
+                                color: this.props.mat.color,
                                 height: '50px',
                                 margin: '60px 0 70px 0',
                                 padding: '0 0.1em 50px 0.1em',
@@ -237,7 +237,7 @@ class MatCard extends Component {
                     <Col style={this.styles('titleWidth')}>
                         <p className='text-center text-darkest'
                            style={this.styles('title')}>
-                            {mat.name}
+                            {mat.name !== 'Vacuum' ? mat.name : ''}
                         </p>
                     </Col>
                     {

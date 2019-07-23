@@ -98,9 +98,68 @@ body {background: #1e1e2f}
 .text-default {color: #344675}
 .text-white {color: #ffffff}
 .text-darkest {color: black}
+.color1 {background: #0001ff; border: 1px solid #0001ff}
+.color2 {background: #0c59e8; border: 1px solid #0c59e8}
+.color3 {background: #01b2ff; border: 1px solid #01b2ff}
+.color4 {background: #00ebde; border: 1px solid #00ebde}
+.color5 {background: #17ff9c; border: 1px solid #17ff9c}
 
 .card-btn:hover, .card-btn:active, .card-btn:focus{
     background: #6c757d !important;
 }
 
 .disableScrollBar::-webkit-scrollbar {width: 0 !important; height: 0 !important}
+
+.slider {
+    -webkit-appearance: none;  /* Override default CSS styles */
+    appearance: none;
+    width: 100%; /* Full-width */
+    height: 8px; /* Specified height */
+    /*border-radius: 5px;*/
+    background: #ffffff; /* Grey background */
+    outline: none; /* Remove outline */
+    opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+    -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+    transition: opacity .2s;
+}
+
+/* Mouse-over effects */
+.slider:hover {
+    opacity: 1; /* Fully shown on mouse-over */
+}
+
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none; /* Override default look */
+    appearance: none;
+    border-radius: 4px;
+    width: 10px; /* Set a specific slider handle width */
+    height: 20px; /* Slider handle height */
+    background: #000000; /* Green background */
+    cursor: pointer; /* Cursor on hover */
+}
+
+.slider::-moz-range-thumb {
+    width: 10px; /* Set a specific slider handle width */
+    height: 20px; /* Slider handle height */
+    border-radius: 4px;
+    background: #000000; /* Green background */
+    cursor: pointer; /* Cursor on hover */
+}
+
+/* The overlay effect (full height and width) - lays on top of the container and over the image */
+.overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #1c1c1c;
+    overflow: hidden;
+    width: 100%;
+    height: 0;
+    transition: .5s ease;
+}
+
+.genSub .overlay {
+    height: 100%;
+}

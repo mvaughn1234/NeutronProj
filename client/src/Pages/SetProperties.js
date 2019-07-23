@@ -152,9 +152,10 @@ class SetProperties extends Component {
                 </Row>
                 <Row>
                     <Container className='p-3 darker'>
-                        <Container className='m-0 p-0 disableScrollBar' style={{maxHeight: '400px', overflow: 'auto'}}>
+                        <Container className='m-0 p-0 disableScrollBar' style={{maxHeight: '400px', overflow: 'auto', border: '1px solid black'}}>
                             <CardColumns className='white p-2' style={{
-                                boxShadow: '0 0 5px 2px rgba(0,0,0,0.2) inset'
+                                boxShadow: '0 0 5px 3px rgba(0,0,0,0.3) inset',
+                                border: '1px solid black'
                             }}>
                                 {console.log(this.props.global.settings.settings)}
                                 {this.props.global.settings ? this.props.global.settings.settings ? this.props.global.settings.settings.length > 0 ? this.props.global.settings.settings.map((setting, id) =>

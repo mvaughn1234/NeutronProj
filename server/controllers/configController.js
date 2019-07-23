@@ -5,6 +5,7 @@ const carbonUser = require('./../config/keys').sshKeys.carbonUser;
 const carbonPass = require('./../config/keys').sshKeys.carbonPass;
 const rb_gen_path = require('./../config/directories').sshPaths.rb_gen_path;
 const rb_gen_path_local = require('./../config/directories').paths.rb_gen_path;
+
 exports.getConfigList = (req,res) => {
     Config.find()
         .then(configs => res.json(configs));
