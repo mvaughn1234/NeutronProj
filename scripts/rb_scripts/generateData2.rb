@@ -97,12 +97,13 @@ def relocate(test_case)
 end
 
 def copy_and_edit(test_case)
+  test_case = test_case[0]
   runmac_path = @output_dir + "run1.mac"
   temp_name = rand(99999999).to_s
   @temp_num = temp_name
   edited = temp_name + "_edited.mac"
   log = temp_name + "_log.out"
-  output_file_name = String(test_case[0][:materials][0]) + "_" + String(test_case[0][:lengths][0]) + "cm_Ene_" + String(test_case[0][:energy]) + "_MeV"
+  output_file_name = String(test_case[:materials][0]) + "_" + String(test_case[:lengths][0]) + "cm_Ene_" + String(test_case[:energy]) + "_MeV"
   puts 'edited: ', edited, ' log: ', log, ' out: ', output_file_name
   if File.exist?(runmac_path)
     temp_name = @output_dir + temp_name + ".mac"
