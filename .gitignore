@@ -9,6 +9,7 @@ run?*.mac*
 *.out
 .log
 *~
+/JSON/
 
 # misc #
 ########
@@ -16,8 +17,16 @@ plots/
 History
 results/
 <<<<<<< HEAD
+<<<<<<< HEAD
 gui/
 build/
 =======
 gui/
 >>>>>>> 834ea8eab8393ba42f0a7b4110151049c9160f14
+=======
+gui/
+
+# build #
+#########
+/build/
+>>>>>>> front-end
