@@ -21,11 +21,12 @@ require 'json'
 @length_min, @length_max = 1, 100 # Min/max lengths (cm)
 
 # For relocating data
-@scripts_dir = "./../"
+@root = "/home/student/geant4/NeutronProj/"
+@scripts_dir =@root+"./scripts/"
 @rb_dir = @scripts_dir + "./rb_scripts/"
 @py_dir = @scripts_dir + "./py_scripts/"
-@output_dir = @scripts_dir + "./../build/" # Where geant puts .root & .ascii files
-@result_dir = @scripts_dir + "./../results/" # Where data is sorted to
+@output_dir = @root + "./build/" # Where geant puts .root & .ascii files
+@result_dir = @root + "./results/" # Where data is sorted to
 @plots_dir = @result_dir + "./plots/"
 @temp_num = 0
 
@@ -82,9 +83,9 @@ end
 # Put files in proper place
 def relocate(test_case)
   # temp_fix_for_ascii(test_case)
-  file_name = test_case[:material][0] + "_" + test_case[:length][0] + "cm*"
+  file_name = String(test_case[0][:materials][0]) + "_" + String(test_case[0][:lengths][0]) + "cm*"
   path_original = "./" + file_name
-  path_final = @result_dir + test_case[:material] + "/" + test_case[:length]
+  path_final = @result_dir + String(test_case[0][:materials][0]) + "/" + String(test_case[0][:lengths][0])
   relocate_cmd = "find ./ -name '" + file_name + "' -exec mv '{}' '" + path_final + "/' ';'"
   make_dir(path_final)
   system(relocate_cmd)
@@ -101,8 +102,8 @@ def copy_and_edit(test_case)
   @temp_num = temp_name
   edited = temp_name + "_edited.mac"
   log = temp_name + "_log.out"
-  output_file_name = test_case[:materials][0] + "_" + test_case[:lengths][0] + "cm_Ene_" + test_case[:energy] + "_MeV"
-  puts `edited: #{edited}, log: #{log}, out: #{output_file_name}`
+  output_file_name = String(test_case[0][:materials][0]) + "_" + String(test_case[0][:lengths][0]) + "cm_Ene_" + String(test_case[0][:energy]) + "_MeV"
+  puts 'edited: ', edited, ' log: ', log, ' out: ', output_file_name
   if File.exist?(runmac_path)
     temp_name = @output_dir + temp_name + ".mac"
     edited = @output_dir + edited
@@ -115,7 +116,7 @@ def copy_and_edit(test_case)
   end
   dest = File.new(edited, "w+")
   File.foreach(temp_name) do |line|
-    for i in range 0..@mats.size() - 1
+    for i in (0..@mats.size() - 1)
       if line =~ /^\/testhadr\/det\/setRadius#{i} \d+ cm$/
         m = test_case[:lengths][i] =~ /(\d+)_?(\d+)*/
         len = $2.empty? ? $1.to_s : $1.to_s + "." + $2.to_s
@@ -149,7 +150,9 @@ def run_tests()
     @process_counter -= 1
     fork do
       temp_name, log = copy_and_edit(setting)
-      puts "Running: " + setting[:material] + " " + setting[:length] + "cm " + setting[:energy] + "MeV"
+      puts "Running: " + String(setting[0][:materials]) + " " + String(setting[0][:lengths]) + "cm " + String(setting[0][:energy]) + "MeV"
+      cmd = String(@output_dir) + "Hadr06 " + String(temp_name) + " > " + String(log)
+      puts 'cmd: ', cmd
       system(@output_dir + "Hadr06 " + temp_name + " > " + log)
       relocate(setting)
       clean()
@@ -158,12 +161,4 @@ def run_tests()
 end
 
 setup(ARGV)
-if validate() == -1
-  puts "invalid input"
-  return
-end
-if create_test_cases() == -1
-  puts "couldn't create test cases"
-  return
-end
 run_tests()
