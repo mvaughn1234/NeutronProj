@@ -22,7 +22,7 @@ require 'json'
 
 # For relocating data
 @root = "/home/student/geant4/NeutronProj/"
-@scripts_dir =@root+"./scripts/"
+@scripts_dir = @root + "./scripts/"
 @rb_dir = @scripts_dir + "./rb_scripts/"
 @py_dir = @scripts_dir + "./py_scripts/"
 @output_dir = @root + "./build/" # Where geant puts .root & .ascii files
@@ -117,22 +117,25 @@ def copy_and_edit(test_case)
   end
   dest = File.new(edited, "w+")
   File.foreach(temp_name) do |line|
-    for i in (0..@mats.size() - 1)
+    puts 'line raw: ', line
+    for i in (0..test_case[:materials].size() - 1)
       if line =~ /^\/testhadr\/det\/setRadius#{i} \d+ cm$/
         m = test_case[:lengths][i] =~ /(\d+)_?(\d+)*/
         len = $2.empty? ? $1.to_s : $1.to_s + "." + $2.to_s
         line = "/testhadr/det/setRadius#{i} " + len + " cm\n"
       elsif line =~ /^\/testhadr\/det\/setMat#{i} \w+$/
         line = "/testhadr/det/setMat#{i} " + test_case[:materials][i] + "\n"
-      elsif line =~ /\/gun\/energy \d+.\d+ \weV/
-        m = test_case[:energy] =~ /(\d+)_?(\d+)*/
-        en = $2.empty? ? $1.to_s : $1.to_s + "." + $2.to_s
-        line = "/gun/energy " + en + " MeV\n"
-      elsif line =~ /^\/analysis\/setFileName .*\.(\w+)$/
-        line = "/analysis/setFileName " + output_file_name + "." + $1 + "\n"
       end
-      dest.write(line)
     end
+    if line =~ /\/gun\/energy \d+.\d+ \weV/
+      m = test_case[:energy] =~ /(\d+)_?(\d+)*/
+      en = $2.empty? ? $1.to_s : $1.to_s + "." + $2.to_s
+      line = "/gun/energy " + en + " MeV\n"
+    elsif line =~ /^\/analysis\/setFileName .*\.(\w+)$/
+      line = "/analysis/setFileName " + output_file_name + "." + $1 + "\n"
+    end
+    dest.write(line)
+
   end
 
   dest.close
