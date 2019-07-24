@@ -41,8 +41,8 @@ def linspace(low, high, num)
 end
 
 def setup(input)
-  data_hash = JSON.parse(File.read(input))
-  puts data_hash
+  data_hash = JSON.parse(File.read(input[0]))
+  puts data_hash[0]["configs"]
   input.each {|flag|
     if (m = flag.match(/^-?[Mm][Aa][Tt].*=(.+)$/))
       if (m2 = m[1].match(/^((\w+,)*(\w+))$/))
