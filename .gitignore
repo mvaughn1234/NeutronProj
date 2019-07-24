@@ -9,6 +9,7 @@ run?*.mac*
 *.out
 .log
 *~
+/JSON/
 
 # misc #
 ########
@@ -16,3 +17,7 @@ plots/
 History
 results/
 gui/
+
+# build #
+#########
+/build/
