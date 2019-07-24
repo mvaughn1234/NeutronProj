@@ -25,6 +25,7 @@ class Header extends Component {
         return (
             <Navbar expand="lg" className='light font-weight-bold'>
                 {/*{console.log(this.props.global)}*/}
+                <Navbar.Brand href="/">Neutron Project</Navbar.Brand>
                 <Nav defaultActiveKey="props" className="mr-auto d-flex flex-row">
                     <LinkContainer to={'/settings'} onClick={() => this.changePage('/settings','', false)}>
                         <Nav.Item>

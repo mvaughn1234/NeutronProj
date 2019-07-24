@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Navbar, Nav} from 'react-bootstrap';
+import {Navbar, Nav, Jumbotron, Button, ProgressBar} from 'react-bootstrap';
 import {Container, Row, Col} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 import {BrowserRouter as Router, Link, Route} from "react-router-dom";
@@ -16,7 +16,7 @@ class GenerateData extends Component {
 
     render() {
         return (
-            <Container fluid>
+            <Container>
                 <Row>
                     <Col className='col-2 p-0 gray5' variant='dark'>
                         <Nav defaultActiveKey="gen1" className="flex-column" style={{margin: '30px 0 0 0'}}>
@@ -36,20 +36,20 @@ class GenerateData extends Component {
                                     </Nav.Item>
                                 </LinkContainer>
                             </div>
-                            {/*<div className='gray6' style={{margin: '10px 0 0 0'}}>*/}
-                            {/*    <LinkContainer to={`${this.state.url}/gen3`}>*/}
-                            {/*        <Nav.Item>*/}
-                            {/*            <Nav.Link href={`${this.state.url}/gen3`} className='text-light'*/}
-                            {/*                      eventKey='gen3'>Gen 3</Nav.Link>*/}
-                            {/*        </Nav.Item>*/}
-                            {/*    </LinkContainer>*/}
-                            {/*</div>*/}
                         </Nav>
                     </Col>
-                    <Col className='m-0 p-0 col-10'>
-                        <Route path={`${this.state.url}`} exact render={(props) => <Gen1 global={this.props.global} setGenList={this.props.setGenList}/>}/>
+                    <Col
+                        className={`m-0 p-0 col-10 ${(this.props.global.runButtonPhrase === 'Generate Data' && this.props.global.genConsoleOpen === true) ? 'genSub' : ''}`}>
+                        <Route path={`${this.state.url}`} exact
+                               render={(props) => <Gen1 global={this.props.global}
+                                                        setGenList={this.props.setGenList}/>}/>
                         <Route path={`${this.state.url}/gen2`} component={Gen2}/>
-                        {/*<Route path={`${this.state.url}/gen3`} component={Gen3}/>*/}
+                        <Container className='overlay'>
+                            <Jumbotron className='darkest h-75 mt-3 mb-3 disableBlur'/>
+                            <ProgressBar className='disableBlur'/>
+                            <Button onClick={this.props.closeGenConsole} disabled={!this.props.global.generatingData}
+                                    className='dark disableBlur'>Close</Button>
+                        </Container>
                     </Col>
                 </Row>
                 <Row className='bg-white'>
@@ -57,13 +57,14 @@ class GenerateData extends Component {
                     <Col className='col-8 p-0'
                         // style={{boxShadow: '0 0 2px 2px rgba(0,0,0,0.2) inset'}}
                     >
-                        {console.log(this.props.global)}
                         <ul className='m-0 p-0' style={{display: 'flex'}}>
                             {this.props.global.settings.matList ? this.props.global.settings.matList.length > 0 ?
                                 this.props.global.settings.matList.map((mat, index) =>
                                     mat.name !== 'Vacuum' ?
-                                        <li className='mx-1 my-1 list-unstyled d-flex align-items-stretch' key={index}><MatCard
-                                            mat={mat} mode={'card'} updateGenList={this.updateGenList}/></li>
+                                        <li className='mx-1 my-1 list-unstyled d-flex align-items-stretch' key={index}>
+                                            <MatCard
+                                                mat={mat} len={{single: true, min: 10, max: 100, part: 30}}
+                                                mode={'card'} updateGenList={this.updateGenList}/></li>
                                         : ''
                                 )
                                 : ''
