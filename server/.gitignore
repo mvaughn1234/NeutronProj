@@ -6,3 +6,8 @@ package-lock.json
 # build #
 #########
 .idea
+student*
+config*
+
+# temp #
+/temp/
