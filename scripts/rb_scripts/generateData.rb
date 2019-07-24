@@ -41,190 +41,13 @@ def linspace(low, high, num)
 end
 
 def setup(input)
-  data_hash = JSON.parse(File.read(input))
-  puts data_hash
-  input.each {|flag|
-    if (m = flag.match(/^-?[Mm][Aa][Tt].*=(.+)$/))
-      if (m2 = m[1].match(/^((\w+,)*(\w+))$/))
-        for mat in m2[1].split(",")
-          @mats.push(mat)
-        end
-      end
-    end
-    if (m = flag.match(/^-?[Ee].*=(.+)$/))
-      if (m2 = m[1].match(/^(([^,]+,)*([^,]+))$/))
-        for en in m2[1].split(",")
-          if (num_decomp = en.match(/^((\d+\.?\d*)([x\*](\d+)\^(\d+)|e(\d+))?([mkg]?ev)?)-?((\d+\.?\d*)([x\*](\d+)\^(\d+)|e(\d+))?([mkg]?ev)?(:(\d+)@(log|base10)))?$/i))
-            val = [BigDecimal(num_decomp[2]), BigDecimal(num_decomp[9])]
-            base = [num_decomp[4], num_decomp[11]]
-            exp = [num_decomp[5], num_decomp[12]]
-            exp2 = [num_decomp[6], num_decomp[13]]
-            size = [num_decomp[7], num_decomp[14]]
-            numBins = num_decomp[16].to_f;
-            scale = num_decomp[17];
-            size_val = BigDecimal("10") ** BigDecimal("-6")
-            @erange = num_decomp[9].nil? ? false : true
-            rng = @erange ? [0, 1] : [0]
-            for i in rng
-              if (size[i] and scale = size[i].match(/(\w)?[Ee][Vv]/))
-                if (scale[1] =~ /[Kk]/)
-                  size_val = BigDecimal("10") ** BigDecimal("-3")
-                elsif scale[1] =~ /[Mm]/
-                  size_val = BigDecimal("1")
-                elsif scale[1] =~ /[Gg]/
-                  size_val = BigDecimal("10") ** BigDecimal("3")
-                end
-              end
-              if not base[i] == nil
-                base[i] = base[i].to_i
-                exp[i] = exp[i].to_i
-                val[i] = val[i] * (base[i] ** exp[i]) * size_val
-              elsif not exp2[i] == nil
-                exp2[i] = exp2[i].to_i
-                val[i] = val[i] * (10 ** exp2[i]) * size_val
-              else
-                val[i] = val[i] * size_val
-              end
-              size_val = BigDecimal("10") ** BigDecimal("-6")
-            end
-            if @erange
-              if numBins.nil?
-                logspace(Math::log(val[0], 10), Math::log(val[1], 10), 30).each {|e_val| @energies.push(e_val.to_f)}
-              else
-                if scale == 'log'
-                  logspace(Math::log(val[0], 10), Math::log(val[1], 10), numBins).each {|e_val| @energies.push(e_val.to_f)}
-                else
-                  linspace(val[0], val[1], numBins).each {|e_val| @energies.push(e_val.to_f)}
-                end
-              end
-            else
-              @energies.push(val[0].to_f)
-            end
-          end
-        end
-      end
-    end
-    if (m = flag.match(/^-?[Ll][Ee][Nn].*=(.*)$/))
-      if (m2 = m[1].match(/^(([^,]+,)*([^,]+))$/))
-        for len in m2[1].split(",")
-          if (len_decomp = len.match(/^(\d+\.?\d*)(-((\d+\.?\d*)(\w+)?(:(\d+))))?$/))
-            val = len_decomp[1].to_f
-            upper = len_decomp[4]
-            part = len_decomp[7]
-            upper = upper.nil? ? nil : upper.to_f
-            part = part.nil? ? nil : upper.to_f
-            size = len_decomp[5]
-            if size
-              if size =~ /^(in|inches|")$/i
-                val /= 2.54
-                upper = upper.nil? ? nil : upper / 2.54
-              elsif size =~ /^(m|meters)$/i
-                val *= 100
-                upper = upper.nil? ? nil : upper * 100
-              elsif size =~ /^(ft|feet|')$/i
-                val /= 2.54 * 12
-                upper = upper.nil? ? nil : upper / 2.54 * 12
-              elsif size =~ /^(mm|milimeters|mili)$/i
-                val /= 10
-                upper = upper.nil? ? nil : upper / 10
-              end
-            end
-            if upper.nil?
-              @lengths.push([val.to_i])
-            else
-              @lengths.push(linspace(val, upper, part))
-            end
-          end
-        end
-      end
-    end
-    if (m = flag.match(/^-?(all.*|each.*)$/i))
-      @each = true
-    end
-    if (m = flag.match(/^-?(together)$/i))
-      @together = true
-    end
-    if (m = flag.match(/^-?cl.*$/i))
-      @clean = true
-    end
-    if (m = flag.match(/^-?(count.*|cnt.*)=(\d+)$/i))
-      @process_counter = $2.to_i
-    end
-  }
-end
-
-def validate()
-  # Validate Settings:
-  for mat in @mats
-    if not @allowed_mats.include? mat.downcase
-      puts "unregistered material: " + mat
-      return -1
-    end
-  end
-  for lens in @lengths
-    for len in lens
-      if len > @length_max
-        puts "material section too large: " + len.to_s + "(cm)"
-        return -1
-      elsif len < @length_min
-        puts "material section too short: " + len.to_s + "(cm)"
-        return -1
-      end
-    end
-  end
-
-  @energies.map! do |en|
-    en.to_s =~ /(\d+).?(\d+)*/
-    en = $2.nil? ? $1.to_s : $1.to_s + "_" + $2.to_s
-    en
-  end
-  puts "energies modified: " + @energies.to_s
-  @lengths.map! {|lens| lens.map! {|len|
-    len.to_s =~ /(\d+).?(\d+)*/
-    len = $2.nil? ? $1.to_s : $1.to_s + "_" + $2.to_s
-    len
-  }}
-  # for en in @energies
-  #   if not @allowed_energies.include? en
-  #     puts "Energy given ("+en.to_s+"MeV) not part of allowed discrete set of energies."
-  #     return -1
-  #   end
-  # end
-
-  # Validate correctness of setting quantities.
-  @sizes = [@mats.size(), @energies.size(), @lengths.size()]
-  if not (@each or @together)
-    @set = @sizes.to_set
-    if (@set.size() == 3)
-      puts "Cannot determine how to run " + @mats.size().to_s + " materials at " + @energies.size().to_s +
-               " energies and for " + @lengths.size().to_s + " different lengths without mixing each setting."
-      return -1
-    end
-  end
-end
-
-def create_test_cases()
-  if @each
-    for mat in @mats
-      for len in @lengths
-        for en in @energies
-          @settings.push({:material => mat, :energy => en, :length => len})
-        end
-      end
-    end
-  elsif @together
-    for len in @lengths[0]
-      for en in @energies
-        @settings.push({:materials => @mats, :energy => en, :lengths => [len, @lengths[1], @lengths[2], @lengths[3]]})
-      end
-    end
-  else
-    for i in 0..@sizes.max - 1
-      m = @sizes[0] > 1 ? @mats[i] : @mats[0]
-      e = @sizes[1] > 1 ? @energies[i] : @energies[0]
-      l = @sizes[2] > 1 ? @lengths[i] : @lengths[0]
-      @settings.push({:material => m, :energy => e, :length => l})
-    end
+  puts input[0], String(input[0])
+  data_hash = JSON.parse(File.read(String(input[0])))[0]["configs"]
+  data_hash.each do |config|
+    matlist = config["matList"]
+    lenList = config["lenList"]
+    energy = config["energy"]
+    @settings.push([:materials => matlist, :energy => energy, :lengths => lenList])
   end
 end
 
@@ -259,7 +82,7 @@ end
 # Put files in proper place
 def relocate(test_case)
   # temp_fix_for_ascii(test_case)
-  file_name = test_case[:material] + "_" + test_case[:length] + "cm*"
+  file_name = test_case[:material][0] + "_" + test_case[:length][0] + "cm*"
   path_original = "./" + file_name
   path_final = @result_dir + test_case[:material] + "/" + test_case[:length]
   relocate_cmd = "find ./ -name '" + file_name + "' -exec mv '{}' '" + path_final + "/' ';'"
@@ -278,7 +101,7 @@ def copy_and_edit(test_case)
   @temp_num = temp_name
   edited = temp_name + "_edited.mac"
   log = temp_name + "_log.out"
-  output_file_name = (@together ? test_case[:materials][0] : test_case[:material]) + "_" + (@together ? test_case[:lengths][0] : test_case[:length]) + "cm_Ene_" + test_case[:energy] + "_MeV"
+  output_file_name = test_case[:materials][0] + "_" + test_case[:lengths][0] + "cm_Ene_" + test_case[:energy] + "_MeV"
   puts `edited: #{edited}, log: #{log}, out: #{output_file_name}`
   if File.exist?(runmac_path)
     temp_name = @output_dir + temp_name + ".mac"
@@ -291,31 +114,14 @@ def copy_and_edit(test_case)
     return
   end
   dest = File.new(edited, "w+")
-  if @together
-    File.foreach(temp_name) do |line|
-      for i in range 0..@mats.size() - 1
-        if line =~ /^\/testhadr\/det\/setRadius#{i} \d+ cm$/
-          m = test_case[:lengths][i] =~ /(\d+)_?(\d+)*/
-          len = $2.empty? ? $1.to_s : $1.to_s + "." + $2.to_s
-          line = "/testhadr/det/setRadius#{i} " + len + " cm\n"
-        elsif line =~ /^\/testhadr\/det\/setMat#{i} \w+$/
-          line = "/testhadr/det/setMat#{i} " + test_case[:materials][i] + "\n"
-        elsif line =~ /\/gun\/energy \d+.\d+ \weV/
-          m = test_case[:energy] =~ /(\d+)_?(\d+)*/
-          en = $2.empty? ? $1.to_s : $1.to_s + "." + $2.to_s
-          line = "/gun/energy " + en + " MeV\n"
-        elsif line =~ /^\/analysis\/setFileName .*\.(\w+)$/
-          line = "/analysis/setFileName " + output_file_name + "." + $1 + "\n"
-        end
-        dest.write(line)
-      end
-    end
-  else
-    File.foreach(temp_name) do |line|
-      if line =~ /^\/testhadr\/det\/setRadius1 \d+ cm$/
-        line = "/testhadr/det/setRadius1 " + test_case[:length] + " cm\n"
-      elsif line =~ /^\/testhadr\/det\/setMat1 \w+$/
-        line = "/testhadr/det/setMat1 " + test_case[:material] + "\n"
+  File.foreach(temp_name) do |line|
+    for i in range 0..@mats.size() - 1
+      if line =~ /^\/testhadr\/det\/setRadius#{i} \d+ cm$/
+        m = test_case[:lengths][i] =~ /(\d+)_?(\d+)*/
+        len = $2.empty? ? $1.to_s : $1.to_s + "." + $2.to_s
+        line = "/testhadr/det/setRadius#{i} " + len + " cm\n"
+      elsif line =~ /^\/testhadr\/det\/setMat#{i} \w+$/
+        line = "/testhadr/det/setMat#{i} " + test_case[:materials][i] + "\n"
       elsif line =~ /\/gun\/energy \d+.\d+ \weV/
         m = test_case[:energy] =~ /(\d+)_?(\d+)*/
         en = $2.empty? ? $1.to_s : $1.to_s + "." + $2.to_s
@@ -326,7 +132,8 @@ def copy_and_edit(test_case)
       dest.write(line)
     end
   end
-  dest.close()
+
+  dest.close
   return edited, log
 end
 
