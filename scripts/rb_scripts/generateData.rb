@@ -41,6 +41,7 @@ def linspace(low, high, num)
 end
 
 def setup(input)
+<<<<<<< HEAD
   data_hash = JSON.parse(File.read(input[0]))
   puts data_hash[0]["configs"]
   input.each {|flag|
@@ -225,6 +226,15 @@ def create_test_cases()
       l = @sizes[2] > 1 ? @lengths[i] : @lengths[0]
       @settings.push({:material => m, :energy => e, :length => l})
     end
+=======
+  puts input[0], String(input[0])
+  data_hash = JSON.parse(File.read(String(input[0])))[0]["configs"]
+  data_hash.each do |config|
+    matlist = config["matList"]
+    lenList = config["lenList"]
+    energy = config["energy"]
+    @settings.push([:materials => matlist, :energy => energy, :lengths => lenList])
+>>>>>>> 8a59433cd8d0cfd34551415cc1c7e3f294c8f9d5
   end
 end
 
@@ -259,7 +269,7 @@ end
 # Put files in proper place
 def relocate(test_case)
   # temp_fix_for_ascii(test_case)
-  file_name = test_case[:material] + "_" + test_case[:length] + "cm*"
+  file_name = test_case[:material][0] + "_" + test_case[:length][0] + "cm*"
   path_original = "./" + file_name
   path_final = @result_dir + test_case[:material] + "/" + test_case[:length]
   relocate_cmd = "find ./ -name '" + file_name + "' -exec mv '{}' '" + path_final + "/' ';'"
@@ -278,7 +288,7 @@ def copy_and_edit(test_case)
   @temp_num = temp_name
   edited = temp_name + "_edited.mac"
   log = temp_name + "_log.out"
-  output_file_name = (@together ? test_case[:materials][0] : test_case[:material]) + "_" + (@together ? test_case[:lengths][0] : test_case[:length]) + "cm_Ene_" + test_case[:energy] + "_MeV"
+  output_file_name = test_case[:materials][0] + "_" + test_case[:lengths][0] + "cm_Ene_" + test_case[:energy] + "_MeV"
   puts `edited: #{edited}, log: #{log}, out: #{output_file_name}`
   if File.exist?(runmac_path)
     temp_name = @output_dir + temp_name + ".mac"
@@ -291,31 +301,14 @@ def copy_and_edit(test_case)
     return
   end
   dest = File.new(edited, "w+")
-  if @together
-    File.foreach(temp_name) do |line|
-      for i in range 0..@mats.size() - 1
-        if line =~ /^\/testhadr\/det\/setRadius#{i} \d+ cm$/
-          m = test_case[:lengths][i] =~ /(\d+)_?(\d+)*/
-          len = $2.empty? ? $1.to_s : $1.to_s + "." + $2.to_s
-          line = "/testhadr/det/setRadius#{i} " + len + " cm\n"
-        elsif line =~ /^\/testhadr\/det\/setMat#{i} \w+$/
-          line = "/testhadr/det/setMat#{i} " + test_case[:materials][i] + "\n"
-        elsif line =~ /\/gun\/energy \d+.\d+ \weV/
-          m = test_case[:energy] =~ /(\d+)_?(\d+)*/
-          en = $2.empty? ? $1.to_s : $1.to_s + "." + $2.to_s
-          line = "/gun/energy " + en + " MeV\n"
-        elsif line =~ /^\/analysis\/setFileName .*\.(\w+)$/
-          line = "/analysis/setFileName " + output_file_name + "." + $1 + "\n"
-        end
-        dest.write(line)
-      end
-    end
-  else
-    File.foreach(temp_name) do |line|
-      if line =~ /^\/testhadr\/det\/setRadius1 \d+ cm$/
-        line = "/testhadr/det/setRadius1 " + test_case[:length] + " cm\n"
-      elsif line =~ /^\/testhadr\/det\/setMat1 \w+$/
-        line = "/testhadr/det/setMat1 " + test_case[:material] + "\n"
+  File.foreach(temp_name) do |line|
+    for i in range 0..@mats.size() - 1
+      if line =~ /^\/testhadr\/det\/setRadius#{i} \d+ cm$/
+        m = test_case[:lengths][i] =~ /(\d+)_?(\d+)*/
+        len = $2.empty? ? $1.to_s : $1.to_s + "." + $2.to_s
+        line = "/testhadr/det/setRadius#{i} " + len + " cm\n"
+      elsif line =~ /^\/testhadr\/det\/setMat#{i} \w+$/
+        line = "/testhadr/det/setMat#{i} " + test_case[:materials][i] + "\n"
       elsif line =~ /\/gun\/energy \d+.\d+ \weV/
         m = test_case[:energy] =~ /(\d+)_?(\d+)*/
         en = $2.empty? ? $1.to_s : $1.to_s + "." + $2.to_s
@@ -326,7 +319,8 @@ def copy_and_edit(test_case)
       dest.write(line)
     end
   end
-  dest.close()
+
+  dest.close
   return edited, log
 end
 
