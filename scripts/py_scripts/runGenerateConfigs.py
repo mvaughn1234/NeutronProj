@@ -35,7 +35,7 @@ def createProps(configJSON):
     propSets = []
     for configMatSet in configJSON:
         for enSet in configMatSet['configs']:
-            print('lenset: ', enSet)
+            # print('lenset: ', enSet)
             mats = enSet['matList']
             lengths = enSet['lenList']
             energy = enSet['energy']
@@ -62,7 +62,7 @@ def createGenerator(props):
 def runGenerators(generators, procCount):
     sharedSem = Semaphore(procCount)
     sharedLock = Lock()
-    for i in range(0, 3):
+    for i in range(0, len(generators)):
         Process(target=generators[i].run, args=(sharedLock, sharedSem,)).start()
 
 
@@ -74,11 +74,8 @@ if __name__ == '__main__':
             configs = json.load(readFile)
         propSets,procCount = createProps(configs)
         generators = []
-        print('propSets: ', propSets)
-        print('procCount: ', procCount)
         for propSet in propSets:
             generators.append(createGenerator(propSet))
-        print('gens: ', generators)
         runGenerators(generators, procCount)
 
     else:
