@@ -29,7 +29,7 @@ def runGenerators(generators,procCount):
 if __name__ == '__main__':
     if sys.argv:
         configsPath = sys.argv[:1]
-        print('path: ', configsPath)
+        print('path: ', sys.argv)
         configs = json.load(configsPath)
         propSets = createProps()
 
