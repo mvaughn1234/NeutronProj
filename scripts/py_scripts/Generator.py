@@ -66,7 +66,8 @@ class Generator:
         tempFileName = curRoot + '/' + str(random.randint(0, 99999999999)) + ".mac"
         tempFileName2 = curRoot + '/' + str(random.randint(0, 99999999999)) + ".mac"
         destFilePath = resultsRoot + '/' + '_'.join(self.mats[0] + '/' + str(self.lengths[0]) + '/')
-        os.makedirs(destFilePath, exist_ok=True)
+        if not os.path.exists(destFilePath):
+            os.makedirs(destFilePath)
         self.destFileName = resultsRoot + '/' + '_'.join(
             (self.mats[0] + '/' + str(self.lengths[0]) + '/' + self.mats[0] + '_' + str(self.lengths[0]) + '_' + str(
                 self.energy)).split('.')) + '.root'

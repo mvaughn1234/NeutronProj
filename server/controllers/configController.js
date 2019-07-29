@@ -133,9 +133,20 @@ exports.runConfigs = (io, Configs) => {
                     });
                     const longestList = lenList.reduce((acc, cur) => cur.length > acc ? cur.length : acc, 0);
                     const lenListAltered = longestList > 1 ? lenList.map((lenListSingle) => {
-                        console.log(lenListSingle, lenListSingle.length);
-                        lenListSingle.length === 1 ? [...Array(longestList).keys()].map(i => lenListSingle) : lenListSingle;
-                    }) : [[].concat.apply([], lenList)];
+                            console.log('lenListSingle: ', lenListSingle)
+                            console.log('lenListSingle2: ', lenListSingle.length)
+                            let tempVar = lenListSingle.length;
+                            console.log('??: ', tempVar===1);
+                            let ret;
+                            lenListSingle.length === 1 ? ret = [...Array(longestList).keys()].map(i => {
+                                        return lenListSingle[0]
+                                    })
+                                : ret = lenListSingle;
+                            return ret
+                        })
+                        : [[].concat.apply([], lenList)];
+                    console.log('altered: ', lenListAltered);
+                    console.log('altered: ', lenList);
                     const transposed = longestList > 1 ? transpose(lenListAltered) : lenListAltered;
                     return Setting.find().then(data => data[0]).then(settings => {
                         const eLow = Number(settings.settings.filter(element => element.title === 'Energy Min')[0].currentValue) * (10 ** -3);
@@ -177,35 +188,35 @@ exports.runConfigs = (io, Configs) => {
         });
 
         const conn = new Client();
-        conn.on('ready', function() {
-            conn.sftp(function(err, sftp) {
+        conn.on('ready', function () {
+            conn.sftp(function (err, sftp) {
                 if (err) throw err;
 
-                const readStream = fs.createReadStream( localPath );
-                const writeStream = sftp.createWriteStream( carbonPath );
+                const readStream = fs.createReadStream(localPath);
+                const writeStream = sftp.createWriteStream(carbonPath);
 
-                writeStream.on('close',function () {
-                    console.log( "- file transferred succesfully" );
-                    conn.exec(`. /home/ubuntu/Downloads/geant/build/geant4make.sh; python /home/student/geant4/NeutronProj/scripts/py_scripts/runGenerateConfigs.py ${carbonPath}`, function(err, stream) {
+                writeStream.on('close', function () {
+                    console.log("- file transferred succesfully");
+                    conn.exec(`. /home/ubuntu/Downloads/geant/build/geant4make.sh; python /home/student/geant4/NeutronProj/scripts/py_scripts/runGenerateConfigs.py ${carbonPath}`, function (err, stream) {
                         if (err) throw err;
-                        stream.on('close', function(code, signal) {
+                        stream.on('close', function (code, signal) {
                             console.log('Stream :: close :: code: ' + code + ', signal: ' + signal);
                             conn.end();
-                        }).on('data', function(data) {
+                        }).on('data', function (data) {
                             console.log('STDOUT: ' + data);
-                        }).stderr.on('data', function(data) {
+                        }).stderr.on('data', function (data) {
                             console.log('STDERR: ' + data);
                         });
                     });
                 });
 
                 writeStream.on('end', function () {
-                    console.log( "sftp connection closed" );
+                    console.log("sftp connection closed");
                     conn.close();
                 });
 
                 // initiate transfer of file
-                readStream.pipe( writeStream );
+                readStream.pipe(writeStream);
             });
         }).connect({
             host: 'carbon444.umm.edu',
