@@ -60,8 +60,8 @@ class Generator:
             print('Couldn\'t open base run file {}.', self.dirProps['baseRun'])
         tempFileName = str(random.randint(0,99999999999))+".run"
         tempFileName2 = str(random.randint(0,99999999999))+".run"
-        self.destFileName = '_'.join((self.mats[0]+'_'+self.lengths[0]+'_'+self.energy).split('.'))+'.root'
-        self.logFileName = '_'.join((self.mats[0]+'_'+self.lengths[0]+'_'+self.energy).split('.'))+'_log.out'
+        self.destFileName = '_'.join((self.mats[0]+'_'+str(self.lengths[0])+'_'+str(self.energy)).split('.'))+'.root'
+        self.logFileName = '_'.join((self.mats[0]+'_'+str(self.lengths[0])+'_'+str(self.energy)).split('.'))+'_log.out'
         copy('run.mac',tempFileName)
         srcRunFile = open(tempFileName,"r")
         dstRunFile = open(tempFileName2,"w+")
