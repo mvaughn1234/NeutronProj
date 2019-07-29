@@ -1,3 +1,11 @@
+=begin
+- run configs -> put into root/results/dump:configID/raw
+- in same process run ascii2csv on single file that was just moved to above path
+- put csv in root/results/dump/configID/csv
+- convert ascii to db format & put in root/
+
+=end
+
 require 'set'
 require 'bigdecimal'
 require 'json'
