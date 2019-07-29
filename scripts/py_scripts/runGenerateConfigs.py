@@ -4,6 +4,7 @@ import sys
 import json
 from Props import Props
 
+
 # Retrieve JSON config path from ARGV[1]
 # Load config
 # extract config details
@@ -12,7 +13,6 @@ from Props import Props
 # run all gen objects together
 
 def createProps(configJSON):
-
     # geantProps = configJSON['geantProps']
     # procCount = geantProps['numProcs']
     # precision = geantProps['precision']
@@ -24,13 +24,14 @@ def createProps(configJSON):
     printProg = 1000
     projRoot = '/home/student/geant4/NeutronProj'
     buildDir = projRoot + '/build'
-    scriptsRoot = projRoot+'/scripts'
-    pyScriptsRoot = scriptsRoot+'/py_scripts'
-    baseRun = pyScriptsRoot+'/run.mac'
+    resRoot = projRoot + '/res'
+    scriptsRoot = projRoot + '/scripts'
+    pyScriptsRoot = scriptsRoot + '/py_scripts'
+    baseRun = pyScriptsRoot + '/run.mac'
     dirProps = {'baseRun': baseRun,
                 'pyScRoot': pyScriptsRoot,
-                         'buildDir': buildDir}
-
+                'buildDir': buildDir,
+                'resRoot': resRoot}
 
     propSets = []
     for configMatSet in configJSON:
@@ -51,13 +52,13 @@ def createProps(configJSON):
             prop = Props(properties)
             propSets.append(prop)
 
-    return propSets,procCount
-
+    return propSets, procCount
 
 
 def createGenerator(props):
     generator = Generator(props)
     return generator
+
 
 def runGenerators(generators, procCount):
     sharedSem = Semaphore(procCount)
@@ -70,9 +71,9 @@ if __name__ == '__main__':
     if sys.argv:
         configsPath = sys.argv[1]
         print('path: ', sys.argv[1])
-        with open(configsPath,'r') as readFile:
+        with open(configsPath, 'r') as readFile:
             configs = json.load(readFile)
-        propSets,procCount = createProps(configs)
+        propSets, procCount = createProps(configs)
         generators = []
         for propSet in propSets:
             generators.append(createGenerator(propSet))
