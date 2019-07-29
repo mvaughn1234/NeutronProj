@@ -12,6 +12,7 @@ from Props import Props
 # run all gen objects together
 
 def createProps(configJSON):
+    configs = configJSON[0]['configs']
     # geantProps = configJSON['geantProps']
     # procCount = geantProps['numProcs']
     # precision = geantProps['precision']
@@ -34,7 +35,7 @@ def createProps(configJSON):
     propSets = []
     for config in configs:
         print('config: ', config)
-        for lenSet in config:
+        for lenSet in config['config']:
             print('lenset: ', lenSet)
             mats = lenSet['matList']
             lengths = lenSet['lenList']
