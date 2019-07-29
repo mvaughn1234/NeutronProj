@@ -32,8 +32,8 @@ class Generator:
             self.lenLines.insert(0, ('/testhadr/det/setRadius{} {} cm\n'.format(i+1, self.lengths[i])))
 
     def editRunFile(self, src, dst):
-        matLinesConcat = self.matLines.reduce(lambda acc, curr : curr+acc, self.matLines)
-        lenLinesConcat = self.matLines.reduce(lambda acc, curr : curr+acc, self.lenLines)
+        matLinesConcat = reduce(lambda acc, curr : curr+acc, self.matLines)
+        lenLinesConcat = reduce(lambda acc, curr : curr+acc, self.lenLines)
         replace = {'/testhadr/det/setMat\n': matLinesConcat,
                    '/testhadr/det/setRadius\n': lenLinesConcat,
                    '/gun/energy\n': '/gun/energy {} MeV\n'.format(self.energy),
