@@ -12,6 +12,7 @@ from Props import Props
 # run all gen objects together
 
 def createProps(configJSON):
+    configs = configJSON[0]['configs']
     # geantProps = configJSON['geantProps']
     # procCount = geantProps['numProcs']
     # precision = geantProps['precision']
