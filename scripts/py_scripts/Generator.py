@@ -53,17 +53,18 @@ class Generator:
 
     def run(self, lock, sem):
         lock.acquire(True)
-        print('current dir', os.getcwd())
+        baseRun = self.dirProps['baseRun']
+        curRoot = self.dirProps['pyScRoot']
         try:
-            baseRunFile = open(self.dirProps['baseRun'],"r")
+            baseRunFile = open(baseRun,"r")
         except IOError:
             print(IOError.message)
             print('Couldn\'t open base run file {}.', self.dirProps['baseRun'])
-        tempFileName = str(random.randint(0,99999999999))+".run"
-        tempFileName2 = str(random.randint(0,99999999999))+".run"
+        tempFileName = curRoot+str(random.randint(0,99999999999))+".run"
+        tempFileName2 = curRoot+str(random.randint(0,99999999999))+".run"
         self.destFileName = '_'.join((self.mats[0]+'_'+str(self.lengths[0])+'_'+str(self.energy)).split('.'))+'.root'
         self.logFileName = '_'.join((self.mats[0]+'_'+str(self.lengths[0])+'_'+str(self.energy)).split('.'))+'_log.out'
-        copy('run.mac',tempFileName)
+        copy(self.dirProps['baseRun'],tempFileName)
         srcRunFile = open(tempFileName,"r")
         dstRunFile = open(tempFileName2,"w+")
         lock.release()
