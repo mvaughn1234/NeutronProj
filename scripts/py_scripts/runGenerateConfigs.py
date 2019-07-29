@@ -14,7 +14,7 @@ configs = None;
 procCount = 1;
 
 def createProps(configJSON):
-    print('configs: ', configJSON.length)
+    print('configs: ', configJSON.len)
     print('configs: ', configJSON[0])
     print('configs: ', configJSON[0]['configs'])
     print('configs: ', configJSON[0]['configs'][0])
