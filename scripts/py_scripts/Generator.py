@@ -57,7 +57,7 @@ class Generator:
             baseRunFile = open(self.dirProps['baseRun'],"r")
         except IOError:
             print(IOError.message)
-            print('Couldn\'t open base run file {}.', self.dirProps.baseRun)
+            print('Couldn\'t open base run file {}.', self.dirProps['baseRun'])
         tempFileName = str(random.randint(0,99999999999))+".run"
         tempFileName2 = str(random.randint(0,99999999999))+".run"
         self.destFileName = '_'.join((self.mats[0]+'_'+self.lengths[0]+'_'+self.energy).split('.'))+'.root'
