@@ -82,5 +82,7 @@ class Generator:
         #     j += 1
 
         os.remove(tempFileName2)
+        os.remove(self.destFileName)
+        os.remove(self.logFileName)
         print("done " + str(os.getpid()))
         sem.release()

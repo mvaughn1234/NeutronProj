@@ -10,11 +10,8 @@ from Props import Props
 # create prop objects
 # create gen objects & pass each prop object
 # run all gen objects together
-configs = None;
-procCount = 1;
 
 def createProps(configJSON):
-    configs = configJSON[0]['configs']
     # geantProps = configJSON['geantProps']
     # procCount = geantProps['numProcs']
     # precision = geantProps['precision']
@@ -36,22 +33,23 @@ def createProps(configJSON):
 
     propSets = []
     for config in configs:
-        mats = config['matList']
-        lengths = config['lenList']
-        energy = config['energy']
-        properties = {
-            'mats': mats,
-            'energy': energy,
-            'lengths': lengths,
-            'printProg': printProg,
-            'beamOn': precision,
-            'procCount': procCount,
-            'dirProps': dirProps
-        }
-        prop = Props(properties)
-        propSets.append(prop)
+        for lenSet in configs:
+            mats = lenSet['matList']
+            lengths = lenSet['lenList']
+            energy = lenSet['energy']
+            properties = {
+                'mats': mats,
+                'energy': energy,
+                'lengths': lengths,
+                'printProg': printProg,
+                'beamOn': precision,
+                'procCount': procCount,
+                'dirProps': dirProps
+            }
+            prop = Props(properties)
+            propSets.append(prop)
 
-    return propSets
+    return propSets,procCount
 
 
 
@@ -72,7 +70,7 @@ if __name__ == '__main__':
         print('path: ', sys.argv[1])
         with open(configsPath,'r') as readFile:
             configs = json.load(readFile)
-        propSets = createProps(configs)
+        propSets,procCount = createProps(configs)
         generators = []
         for propSet in propSets:
             generators.append(createGenerator(propSet))
