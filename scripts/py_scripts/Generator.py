@@ -74,7 +74,7 @@ class Generator:
         os.remove(tempFileName)
         sem.acquire(True)
         print("Running Test: " + self.destFileName + " -- " + str(os.getpid()))
-        os.system(self.dirProps['buildDir']+"/Hadr06 "+self.destFileName+" > "+self.logFileName)
+        os.system(self.dirProps['buildDir']+"/Hadr06 "+tempFileName2+" > "+self.logFileName)
 
         # # Do long thing to test process handling:
         # j = 0
