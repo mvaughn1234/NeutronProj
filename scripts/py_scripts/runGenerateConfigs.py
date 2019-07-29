@@ -14,7 +14,11 @@ configs = None;
 procCount = 1;
 
 def createProps(configJSON):
-    print('configs: ', configJSON)
+    print('configs: ', configJSON.length)
+    print('configs: ', configJSON[0])
+    print('configs: ', configJSON[0]['configs'])
+    print('configs: ', configJSON[0]['configs'][0])
+    print('configs: ', configJSON[0]['configs'][0]['matList'])
     configs = configJSON['configs']
     # geantProps = configJSON['geantProps']
     # procCount = geantProps['numProcs']
