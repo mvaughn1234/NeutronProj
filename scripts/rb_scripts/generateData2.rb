@@ -42,8 +42,8 @@ def linspace(low, high, num)
 end
 
 def setup(input)
-  puts input[0], String(input[0])
   data_hash = JSON.parse(File.read(String(input[0])))[0]["configs"]
+  puts String(data_hash)
   data_hash.each do |config|
     matlist = config["matList"]
     lenList = config["lenList"]
@@ -104,7 +104,7 @@ def copy_and_edit(test_case)
   edited = temp_name + "_edited.mac"
   log = temp_name + "_log.out"
   output_file_name = String(test_case[:materials][0]) + "_" + String(test_case[:lengths][0]) + "cm_Ene_" + String(test_case[:energy]) + "_MeV"
-  puts 'edited: ', edited, ' log: ', log, ' out: ', output_file_name
+#  puts 'edited: ', edited, ' log: ', log, ' out: ', output_file_name
   if File.exist?(runmac_path)
     temp_name = @output_dir + temp_name + ".mac"
     edited = @output_dir + edited
@@ -117,20 +117,15 @@ def copy_and_edit(test_case)
   end
   dest = File.new(edited, "w+")
   File.foreach(temp_name) do |line|
-    puts 'line raw: ', line
-    for i in (0..test_case[:materials].size() - 1)
+    for i in (1..test_case[:materials].size())
       if line =~ /^\/testhadr\/det\/setRadius#{i} \d+ cm$/
-        m = test_case[:lengths][i] =~ /(\d+)_?(\d+)*/
-        len = $2.empty? ? $1.to_s : $1.to_s + "." + $2.to_s
-        line = "/testhadr/det/setRadius#{i} " + len + " cm\n"
+        line = "/testhadr/det/setRadius#{i} " + String(test_case[:lengths][i-1]) + " cm\n"
       elsif line =~ /^\/testhadr\/det\/setMat#{i} \w+$/
-        line = "/testhadr/det/setMat#{i} " + test_case[:materials][i] + "\n"
+        line = "/testhadr/det/setMat#{i} " + String(test_case[:materials][i-1]) + "\n"
       end
     end
     if line =~ /\/gun\/energy \d+.\d+ \weV/
-      m = test_case[:energy] =~ /(\d+)_?(\d+)*/
-      en = $2.empty? ? $1.to_s : $1.to_s + "." + $2.to_s
-      line = "/gun/energy " + en + " MeV\n"
+      line = "/gun/energy " + String(test_case[:energy]) + " MeV\n"
     elsif line =~ /^\/analysis\/setFileName .*\.(\w+)$/
       line = "/analysis/setFileName " + output_file_name + "." + $1 + "\n"
     end
@@ -156,7 +151,6 @@ def run_tests()
       temp_name, log = copy_and_edit(setting)
       puts "Running: " + String(setting[0][:materials]) + " " + String(setting[0][:lengths]) + "cm " + String(setting[0][:energy]) + "MeV"
       cmd = String(@output_dir) + "Hadr06 " + String(temp_name) + " > " + String(log)
-      puts 'cmd: ', cmd
       system(@output_dir + "Hadr06 " + temp_name + " > " + log)
       relocate(setting)
       clean()
