@@ -22,7 +22,7 @@ def extract_data(filename):
     return data
 
 def extract_energy(fname):
-    matches = re.match('.*Ene_(\d+)[_\.]?(\d*)_MeV.csv',fname)
+    matches = re.match('.*_(\d+)[_\.]?(\d*).csv',fname)
     d = 0
     if matches:
         d = float(matches.group(1)+"."+matches.group(2)) if len(matches.group(2)) != 0 else float(matches.group(1))
@@ -34,7 +34,7 @@ for dirName, subdirList, fileList in os.walk(resultsDir):
         cur_mat = match.group(1)
         length = 0
 
-    fileList = sorted(filter(lambda val: re.match('^.*MeV\.csv$',val),fileList),key=extract_energy)
+    fileList = sorted(filter(lambda val: re.match('^(\d+)\.csv$',val),fileList),key=extract_energy)
     length += 0 if len(fileList)==0 else 1
     for file in fileList:
         Mat[:,input_energy,length-1] = extract_data(dirName+"/"+file)
