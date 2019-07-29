@@ -65,7 +65,7 @@ class Generator:
             print('Couldn\'t open base run file {}.', self.dirProps['baseRun'])
         tempFileName = curRoot + '/' + str(random.randint(0, 99999999999)) + ".mac"
         tempFileName2 = curRoot + '/' + str(random.randint(0, 99999999999)) + ".mac"
-        destFilePath = resultsRoot + '/' + '_'.join(self.mats[0] + '/' + str(self.lengths[0]) + '/')
+        destFilePath = resultsRoot + '/' + '_'.join((self.mats[0] + '/' + str(self.lengths[0]) + '/').split('.'))
         if not os.path.exists(destFilePath):
             os.makedirs(destFilePath)
         self.destFileName = resultsRoot + '/' + '_'.join(

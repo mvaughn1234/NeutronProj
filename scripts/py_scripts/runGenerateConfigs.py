@@ -24,7 +24,7 @@ def createProps(configJSON):
     printProg = 1000
     projRoot = '/home/student/geant4/NeutronProj'
     buildDir = projRoot + '/build'
-    resRoot = projRoot + '/res'
+    resRoot = projRoot + '/results'
     scriptsRoot = projRoot + '/scripts'
     pyScriptsRoot = scriptsRoot + '/py_scripts'
     baseRun = pyScriptsRoot + '/run.mac'
