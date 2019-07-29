@@ -24,7 +24,11 @@ def createProps(configJSON):
     procCount = 20
     precision = 10000
     printProg = 1000
-    dirProps = {'baseRun': './run.mac',
+    projRoot = './geant4/NeutronProj'
+    scriptsRoot = projRoot+'/scripts'
+    pyScriptsRoot = scriptsRoot+'/py_scripts'
+    baseRun = pyScriptsRoot+'/run.mac'
+    dirProps = {'baseRun': baseRun,
                          'buildDir': './../../build/'}
 
 
