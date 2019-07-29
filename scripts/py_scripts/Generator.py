@@ -2,6 +2,7 @@ import os
 import random
 from shutil import copy
 from Props import Props
+from functools import reduce
 
 class Generator:
     procCount = 2
