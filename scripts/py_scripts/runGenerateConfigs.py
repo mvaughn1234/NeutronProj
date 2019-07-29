@@ -33,7 +33,9 @@ def createProps(configJSON):
 
     propSets = []
     for config in configs:
+        print('config: ', config)
         for lenSet in config:
+            print('lenset: ', lenSet)
             mats = lenSet['matList']
             lengths = lenSet['lenList']
             energy = lenSet['energy']
