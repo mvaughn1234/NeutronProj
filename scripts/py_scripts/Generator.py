@@ -53,6 +53,7 @@ class Generator:
 
     def run(self, lock, sem):
         lock.acquire(True)
+        print('current dir', os.DirEntry)
         try:
             baseRunFile = open(self.dirProps['baseRun'],"r")
         except IOError:
