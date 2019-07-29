@@ -34,11 +34,11 @@ def createProps(configJSON):
 
     propSets = []
     for configMatSet in configJSON:
-        for lenSet in configMatSet['configs']:
-            print('lenset: ', lenSet)
-            mats = lenSet['matList']
-            lengths = lenSet['lenList']
-            energy = lenSet['energy']
+        for enSet in configMatSet['configs']:
+            print('lenset: ', enSet)
+            mats = enSet['matList']
+            lengths = enSet['lenList']
+            energy = enSet['energy']
             properties = {
                 'mats': mats,
                 'energy': energy,
@@ -74,8 +74,11 @@ if __name__ == '__main__':
             configs = json.load(readFile)
         propSets,procCount = createProps(configs)
         generators = []
+        print('propSets: ', propSets)
+        print('procCount: ', procCount)
         for propSet in propSets:
             generators.append(createGenerator(propSet))
+        print('gens: ', generators)
         runGenerators(generators, procCount)
 
     else:
