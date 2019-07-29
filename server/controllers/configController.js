@@ -186,7 +186,7 @@ exports.runConfigs = (io, Configs) => {
 
                 writeStream.on('close',function () {
                     console.log( "- file transferred succesfully" );
-                    conn.exec(`G410; ruby /home/student/geant4/NeutronProj/scripts/rb_scripts/generateData2.rb ${carbonPath}`, function(err, stream) {
+                    conn.exec(`. /home/ubuntu/Downloads/geant/build/geant4make.sh; ruby /home/student/geant4/NeutronProj/scripts/rb_scripts/generateData2.rb ${carbonPath}`, function(err, stream) {
                         if (err) throw err;
                         stream.on('close', function(code, signal) {
                             console.log('Stream :: close :: code: ' + code + ', signal: ' + signal);
