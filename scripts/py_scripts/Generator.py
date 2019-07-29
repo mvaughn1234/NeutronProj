@@ -61,8 +61,8 @@ class Generator:
         except IOError:
             print(IOError.message)
             print('Couldn\'t open base run file {}.', self.dirProps['baseRun'])
-        tempFileName = curRoot+'/'+str(random.randint(0,99999999999))+".run"
-        tempFileName2 = curRoot+'/'+str(random.randint(0,99999999999))+".run"
+        tempFileName = curRoot+'/'+str(random.randint(0,99999999999))+".mac"
+        tempFileName2 = curRoot+'/'+str(random.randint(0,99999999999))+".mac"
         self.destFileName = curRoot+'/'+'_'.join((self.mats[0]+'_'+str(self.lengths[0])+'_'+str(self.energy)).split('.'))+'.root'
         self.logFileName = curRoot+'/'+'_'.join((self.mats[0]+'_'+str(self.lengths[0])+'_'+str(self.energy)).split('.'))+'_log.out'
         copy(self.dirProps['baseRun'],tempFileName)
