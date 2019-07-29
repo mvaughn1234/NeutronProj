@@ -15,14 +15,13 @@ class Generator:
         self.lengths = properties.lengths
         self.printProg = properties.printProg
         self.beamOn = properties.beamOn
-        self.destFileName = properties.destFileName
-        self.logFile = properties.logFile
         self.dirProps = properties.dirProps
         self.procCount = properties.procCount
 
         self.matLines = []
         self.lenLines = []
-
+        self.destFileName = ''
+        self.logFileName = ''
 
     def genLines(self):
         for i in range(0, len(self.mats)):
@@ -61,6 +60,8 @@ class Generator:
             print('Couldn\'t open base run file {}.', self.dirProps.baseRun)
         tempFileName = str(random.randint(0,99999999999))+".run"
         tempFileName2 = str(random.randint(0,99999999999))+".run"
+        self.destFileName = '_'.join((self.mats[0]+'_'+self.lengths[0]+'_'+self.energy).split('.'))+'.root'
+        self.logFileName = '_'.join((self.mats[0]+'_'+self.lengths[0]+'_'+self.energy).split('.'))+'_log.out'
         copy('run.mac',tempFileName)
         srcRunFile = open(tempFileName,"r")
         dstRunFile = open(tempFileName2,"w+")
@@ -70,12 +71,12 @@ class Generator:
         os.remove(tempFileName)
         sem.acquire(True)
         print("Running Test: " + self.destFileName + " -- " + str(os.getpid()))
-        # os.system(self.dirProps['buildDir']+"Hadr06 "+self.destFileName+" > "+self.logFile)
+        os.system(self.dirProps['buildDir']+"Hadr06 "+self.destFileName+" > "+self.logFile)
 
-        # Do long thing to test process handling:
-        j = 0
-        for i in range(0,99999999):
-            j += 1
+        # # Do long thing to test process handling:
+        # j = 0
+        # for i in range(0,99999999):
+        #     j += 1
 
         os.remove(tempFileName2)
         print("done " + str(os.getpid()))
