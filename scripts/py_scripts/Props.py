@@ -19,6 +19,10 @@ class Props:
         self.beamOn = properties['beamOn']
         self.dirProps = properties['dirProps']
         self.procCount = properties['procCount']
+        self.energyMin = properties['energyMin']
+        self.energyMax = properties['energyMax']
+        self.numBins = properties['numBins']
+        self.scale = properties['scale']
 
         # self.validate()
 

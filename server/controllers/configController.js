@@ -122,106 +122,116 @@ let transpose = m => m[0].map((x, i) => m.map(x => x[i]));
 
 
 exports.runConfigs = (io, Configs) => {
-    let promises = Configs.map(configID => {
-        return Config.findById(configID)
-            .then(config => {
-                let configObj = {configs: []};
-                if (config.mode === 'single') {
-                    const matList = config.matList.map(mat => mat.name);
-                    const lenList = config.lenList.map(len => {
-                        return len.single ? [Number(len.min)] : linspace(Number(len.min), Number(len.max), Number(len.part));
-                    });
-                    const longestList = lenList.reduce((acc, cur) => cur.length > acc ? cur.length : acc, 0);
-                    const lenListAltered = longestList > 1 ? lenList.map((lenListSingle) => {
-                            console.log('lenListSingle: ', lenListSingle)
-                            console.log('lenListSingle2: ', lenListSingle.length)
-                            let tempVar = lenListSingle.length;
-                            console.log('??: ', tempVar===1);
-                            let ret;
-                            lenListSingle.length === 1 ? ret = [...Array(longestList).keys()].map(i => {
+    let eLow, eHigh, numBins, precision, procCount, scale, energy;
+    let promises = Setting.find().then(data => data[0]).then(settings => {
+        eLow = Number(settings.settings.filter(element => element.title === 'Energy Min')[0].currentValue) * (10 ** -3);
+        eHigh = Number(settings.settings.filter(element => element.title === 'Energy Max')[0].currentValue);
+        numBins = Number(settings.settings.filter(element => element.title === 'Num Bins')[0].currentValue);
+        precision = Number(settings.settings.filter(element => element.title === 'Precision')[0].currentValue);
+        procCount = Number(settings.settings.filter(element => element.title === 'Num Processes')[0].currentValue);
+        scale = settings.settings.filter(element => element.title === 'Set Scale')[0].currentValue;
+        energy = scale === 'Log' ? logspace(Math.log10(eLow), Math.log10(eHigh), numBins) : linspace(eLow, eHigh, numBins);
+        return Configs.map(configID => {
+            return Config.findById(configID)
+                .then(config => {
+                    let configObj = {configs: []};
+                    if (config.mode === 'single') {
+                        const matList = config.matList.map(mat => mat.name);
+                        const lenList = config.lenList.map(len => {
+                            return len.single ? [Number(len.min)] : linspace(Number(len.min), Number(len.max), Number(len.part));
+                        });
+                        const longestList = lenList.reduce((acc, cur) => cur.length > acc ? cur.length : acc, 0);
+                        const lenListAltered = longestList > 1 ? lenList.map((lenListSingle) => {
+                                let tempVar = lenListSingle.length;
+                                let ret;
+                                lenListSingle.length === 1 ? ret = [...Array(longestList).keys()].map(i => {
                                         return lenListSingle[0]
                                     })
-                                : ret = lenListSingle;
-                            return ret
-                        })
-                        : [[].concat.apply([], lenList)];
-                    console.log('altered: ', lenListAltered);
-                    console.log('altered: ', lenList);
-                    const transposed = longestList > 1 ? transpose(lenListAltered) : lenListAltered;
-                    return Setting.find().then(data => data[0]).then(settings => {
-                        const eLow = Number(settings.settings.filter(element => element.title === 'Energy Min')[0].currentValue) * (10 ** -3);
-                        const eHigh = Number(settings.settings.filter(element => element.title === 'Energy Max')[0].currentValue);
-                        const numBins = Number(settings.settings.filter(element => element.title === 'Num Bins')[0].currentValue);
-                        const scale = settings.settings.filter(element => element.title === 'Set Scale')[0].currentValue;
-                        const energy = scale === 'Log' ? logspace(eLow * (10 ** -3), eHigh, numBins) : linspace(eLow * (10 ** 3), eHigh, numBins);
-                        const flags = config.flags.join(',');
+                                    : ret = lenListSingle;
+                                return ret
+                            })
+                            : [[].concat.apply([], lenList)];
+                        const transposed = longestList > 1 ? transpose(lenListAltered) : lenListAltered;
                         transposed.forEach(lenSet => {
                             energy.forEach(en => {
                                 configObj.configs.push({matList: matList, lenList: lenSet, energy: en});
                             })
                         });
                         return configObj;
-                    })
-                }
-            })
+                    }
+                })
+        });
     });
 
-    Promise.all(promises).then(configSet => {
-        let data = JSON.stringify(configSet);
-        let curseconds = Date.now();
-        let carbonJSONPath = `/home/${carbonUser}/geant4/NeutronProj/JSON/configs/`;
-        let tempPath = './temp/'
-        let docName = `config-${curseconds}.json`;
-        let localPath = tempPath + docName;
-        let carbonPath = carbonJSONPath + docName;
-        fs.open(localPath, 'w', function (err, fd) {
-            if (err) {
-                throw 'could not open file: ' + err;
-            }
+    promises.then(configs =>
+        Promise.all(configs).then(configSet => {
+            console.log('pre: ', configSet);
+            let temp = [{
+                'geantProps': {
+                    'procCount': procCount,
+                    'precision': precision,
+                    'energyMin': eLow,
+                    'energyMax': eHigh,
+                    'numBins': numBins,
+                    'scale': scale
+                }
+            }, ...configSet];
+            console.log('post: ', temp);
+            let data = JSON.stringify(temp)
+            let curseconds = Date.now();
+            let carbonJSONPath = `/home/${carbonUser}/geant4/NeutronProj/JSON/configs/`;
+            let tempPath = './temp/';
+            let docName = `config-${curseconds}.json`;
+            let localPath = tempPath + docName;
+            let carbonPath = carbonJSONPath + docName;
+            fs.open(localPath, 'w', function (err, fd) {
+                if (err) {
+                    throw 'could not open file: ' + err;
+                }
 
-            fs.write(fd, data, 0, 'utf8', function (err) {
-                if (err) throw 'error writing file: ' + err;
-                fs.close(fd, function () {
-                    console.log('write the file successfully');
+                fs.write(fd, data, 0, 'utf8', function (err) {
+                    if (err) throw 'error writing file: ' + err;
+                    fs.close(fd, function () {
+                        console.log('write the file successfully');
+                    })
                 })
-            })
-        });
+            });
 
-        const conn = new Client();
-        conn.on('ready', function () {
-            conn.sftp(function (err, sftp) {
-                if (err) throw err;
+            const conn = new Client();
+            conn.on('ready', function () {
+                conn.sftp(function (err, sftp) {
+                    if (err) throw err;
 
-                const readStream = fs.createReadStream(localPath);
-                const writeStream = sftp.createWriteStream(carbonPath);
+                    const readStream = fs.createReadStream(localPath);
+                    const writeStream = sftp.createWriteStream(carbonPath);
 
-                writeStream.on('close', function () {
-                    console.log("- file transferred succesfully");
-                    conn.exec(`. /home/ubuntu/Downloads/geant/build/geant4make.sh; python /home/student/geant4/NeutronProj/scripts/py_scripts/runGenerateConfigs.py ${carbonPath}`, function (err, stream) {
-                        if (err) throw err;
-                        stream.on('close', function (code, signal) {
-                            console.log('Stream :: close :: code: ' + code + ', signal: ' + signal);
-                            conn.end();
-                        }).on('data', function (data) {
-                            console.log('STDOUT: ' + data);
-                        }).stderr.on('data', function (data) {
-                            console.log('STDERR: ' + data);
+                    writeStream.on('close', function () {
+                        console.log("- file transferred succesfully");
+                        conn.exec(`. /home/ubuntu/Downloads/geant/build/geant4make.sh; python /home/student/geant4/NeutronProj/scripts/py_scripts/runGenerateConfigs.py ${carbonPath}`, function (err, stream) {
+                            if (err) throw err;
+                            stream.on('close', function (code, signal) {
+                                console.log('Stream :: close :: code: ' + code + ', signal: ' + signal);
+                                conn.end();
+                            }).on('data', function (data) {
+                                console.log('STDOUT: ' + data);
+                            }).stderr.on('data', function (data) {
+                                console.log('STDERR: ' + data);
+                            });
                         });
                     });
-                });
 
-                writeStream.on('end', function () {
-                    console.log("sftp connection closed");
-                    conn.close();
-                });
+                    writeStream.on('end', function () {
+                        console.log("sftp connection closed");
+                        conn.close();
+                    });
 
-                // initiate transfer of file
-                readStream.pipe(writeStream);
+                    // initiate transfer of file
+                    readStream.pipe(writeStream);
+                });
+            }).connect({
+                host: 'carbon444.umm.edu',
+                username: 'student',
+                password: 'ccstdnt1'
             });
-        }).connect({
-            host: 'carbon444.umm.edu',
-            username: 'student',
-            password: 'ccstdnt1'
-        });
-    })
+        }));
 };

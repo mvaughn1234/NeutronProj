@@ -14,7 +14,7 @@ class Gen1 extends Component {
     }
 
     singleVacuum(){
-        let item = this.props.global.genListSingle.find((genItem) => genItem.mat.name === 'Vacuum');
+        let item = this.props.global.genListSingle.find((genItem) => genItem.mat.name === 'vacuum');
         if(item){
             return item.html;
         }else{
@@ -38,7 +38,7 @@ class Gen1 extends Component {
                                 <Col className='col-12 overflow-auto'>
                                     <ul className='m-0 p-0 d-flex' style={{display: 'flex'}}>
                                         {this.singleVacuum()}
-                                        {this.props.global.genListSingle.filter((genItem) => genItem.mat.name !== 'Vacuum').map(genItem => genItem.html).reverse()}
+                                        {this.props.global.genListSingle.filter((genItem) => genItem.mat.name !== 'vacuum').map(genItem => genItem.html).reverse()}
                                     </ul>
                                 </Col>
                             </Row>
