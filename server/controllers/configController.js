@@ -121,7 +121,6 @@ let exportToJsonFile = (jsonData) => {
 let transpose = m => m[0].map((x, i) => m.map(x => x[i]));
 
 
-
 exports.runConfigs = (io, Configs) => {
     let eLow, eHigh, numBins, precision, procCount, scale, energy;
     let promises = Setting.find().then(data => data[0]).then(settings => {
@@ -178,14 +177,69 @@ exports.runConfigs = (io, Configs) => {
                 }
             }, ...configSet];
             console.log('post: ', temp);
-            let data = JSON.stringify(temp)
+            let data = JSON.stringify(temp);
             let curseconds = Date.now();
-            let carbonJSONPath = `/home/${carbonUser}/geant4/NeutronProj/JSON/configs/`;
-            let tempPath = './temp/';
+            //     REMOTE:
+            //     let carbonJSONPath = `/home/${carbonUser}/geant4/NeutronProj/JSON/configs/`;
+            //     let tempPath = './temp/';
+            //     let docName = `config-${curseconds}.json`;
+            //     let localPath = tempPath + docName;
+            //     let carbonPath = carbonJSONPath + docName;
+            //     fs.open(localPath, 'w', function (err, fd) {
+            //         if (err) {
+            //             throw 'could not open file: ' + err;
+            //         }
+            //
+            //         fs.write(fd, data, 0, 'utf8', function (err) {
+            //             if (err) throw 'error writing file: ' + err;
+            //             fs.close(fd, function () {
+            //                 console.log('write the file successfully');
+            //             })
+            //         })
+            //     });
+            //
+            //     const conn = new Client();
+            //     conn.on('ready', function () {
+            //         conn.sftp(function (err, sftp) {
+            //             if (err) throw err;
+            //
+            //             const readStream = fs.createReadStream(localPath);
+            //             const writeStream = sftp.createWriteStream(carbonPath);
+            //
+            //             writeStream.on('close', function () {
+            //                 console.log("- file transferred succesfully");
+            //                 conn.exec(`. /home/ubuntu/Downloads/geant/build/geant4make.sh; python /home/student/geant4/NeutronProj/scripts/py_scripts/runGenerateConfigs.py ${carbonPath}`, function (err, stream) {
+            //                     if (err) throw err;
+            //                     stream.on('close', function (code, signal) {
+            //                         console.log('Stream :: close :: code: ' + code + ', signal: ' + signal);
+            //                         conn.end();
+            //                     }).on('data', function (data) {
+            //                         console.log('STDOUT: ' + data);
+            //                     }).stderr.on('data', function (data) {
+            //                         console.log('STDERR: ' + data);
+            //                     });
+            //                 });
+            //             });
+            //
+            //             writeStream.on('end', function () {
+            //                 console.log("sftp connection closed");
+            //                 conn.close();
+            //             });
+            //
+            //             // initiate transfer of file
+            //             readStream.pipe(writeStream);
+            //         });
+            //     }).connect({
+            //         host: 'carbon444.umm.edu',
+            //         username: 'student',
+            //         password: 'ccstdnt1'
+            //     });
+            // }));
+            //     LOCAL:
+            let jsonPath = '/home/student/geant4/NeutronProj/JSON/configs/';
             let docName = `config-${curseconds}.json`;
-            let localPath = tempPath + docName;
-            let carbonPath = carbonJSONPath + docName;
-            fs.open(localPath, 'w', function (err, fd) {
+            let fullPath = jsonPath + docName;
+            fs.open(fullPath, 'w', function (err, fd) {
                 if (err) {
                     throw 'could not open file: ' + err;
                 }
@@ -193,46 +247,13 @@ exports.runConfigs = (io, Configs) => {
                 fs.write(fd, data, 0, 'utf8', function (err) {
                     if (err) throw 'error writing file: ' + err;
                     fs.close(fd, function () {
-                        console.log('write the file successfully');
+                        console.log('wrote the file successfully');
                     })
                 })
             });
 
-            const conn = new Client();
-            conn.on('ready', function () {
-                conn.sftp(function (err, sftp) {
-                    if (err) throw err;
+            const generator = spawn('python3', ['/home/student/geant4/NeutronProj/scripts/py_scripts/runGenerateConfigs.py', fullPath])
 
-                    const readStream = fs.createReadStream(localPath);
-                    const writeStream = sftp.createWriteStream(carbonPath);
 
-                    writeStream.on('close', function () {
-                        console.log("- file transferred succesfully");
-                        conn.exec(`. /home/ubuntu/Downloads/geant/build/geant4make.sh; python /home/student/geant4/NeutronProj/scripts/py_scripts/runGenerateConfigs.py ${carbonPath}`, function (err, stream) {
-                            if (err) throw err;
-                            stream.on('close', function (code, signal) {
-                                console.log('Stream :: close :: code: ' + code + ', signal: ' + signal);
-                                conn.end();
-                            }).on('data', function (data) {
-                                console.log('STDOUT: ' + data);
-                            }).stderr.on('data', function (data) {
-                                console.log('STDERR: ' + data);
-                            });
-                        });
-                    });
-
-                    writeStream.on('end', function () {
-                        console.log("sftp connection closed");
-                        conn.close();
-                    });
-
-                    // initiate transfer of file
-                    readStream.pipe(writeStream);
-                });
-            }).connect({
-                host: 'carbon444.umm.edu',
-                username: 'student',
-                password: 'ccstdnt1'
-            });
         }));
 };

@@ -26,7 +26,7 @@ class ParentPage extends Component {
             genListMulti: [],
             configs: [],
             defaultMat: {name: 'vacuum', installed: true, color: '#000000'},
-            socket: io('http://localhost:5001'),
+            socket: io('http://10.103.72.187:5001'),
         };
         this.changeSettings = this.changeSettings.bind(this);
         this.initSettings = this.initSettings.bind(this);
@@ -78,7 +78,7 @@ class ParentPage extends Component {
     }
 
     uploadConfig(config) {
-        return axios.post(`http://localhost:5000/api/v1/config/new`, config)
+        return axios.post(`http://10.103.72.187:5000/api/v1/config/new`, config)
             .then(res => res.data)
             .then(data => {
                 this.setState({configs: [...this.state.configs, data]});
@@ -158,7 +158,7 @@ class ParentPage extends Component {
     };
 
     initSettings() {
-        axios.get('http://localhost:5000/api/v1/props')
+        axios.get('http://10.103.72.187:5000/api/v1/props')
             .then(res => res.data)
             .then(data => this.setState({settings: data[0]}));
         let i = 0;

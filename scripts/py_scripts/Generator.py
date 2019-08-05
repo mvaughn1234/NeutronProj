@@ -4,6 +4,7 @@ import re
 from shutil import copy
 from Props import Props
 from functools import reduce
+from mongoengine import Client
 
 
 class Generator:
@@ -80,6 +81,7 @@ class Generator:
                 self.Merge(jsonData, {length: {energy: currentRunData}})
         else:
             jsonData[length] = {energy: currentRunData}
+
 
         with open(dbFile, 'w') as dbFileHandle:
             json.dump(jsonData, dbFileHandle)

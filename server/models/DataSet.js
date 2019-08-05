@@ -10,10 +10,6 @@ const DataSetSchema = new Schema({
         type: Number,
         required: true
     },
-    precision: {
-        type: Number,
-        required: true
-    },
     eOut: {
         type: Array,
         required: true

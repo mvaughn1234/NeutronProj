@@ -6,8 +6,8 @@ const DataSet = require('./DataSet');
 
 
 const MatDBSchema = new Schema({
-    Mat: Mat.schema,
-    dataSets: [DataSet.schema]
+    mat: Mat.schema,
+    data: [DataSet.schema]
 });
 
 const MatDB = mongoose.model('matDB', MatDBSchema);
