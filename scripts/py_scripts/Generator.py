@@ -60,32 +60,27 @@ class Generator:
         src.close()
         dst.close()
 
-    def Merge(self,dict1,dict2):
+    def Merge(self, dict1, dict2):
         return dict1.update(dict2)
 
     def store(self, data, length, energy, dbFile):
-        db = connect('test','mongodb+srv://dbuser:Password@cluster0-zehp8.mongodb.net/test?retryWrites=true&w=majority');
+        db = connect('test',
+                     'mongodb+srv://dbuser:Password@cluster0-zehp8.mongodb.net/test?retryWrites=true&w=majority');
 
-        mat = requests(self.url+'api/v1/')
-        currentRunData = {}
+        currentRunData = {'eIn': self.energy, 'eOut': []}
+        i = 0
         with open(data, 'r') as asciiFile:
             for line in asciiFile:
                 matches = re.findall('(\-?\d+\.\d+e[\-\+]\d+)', line)
                 if matches:
-                    currentRunData[float(matches[0])] = float(matches[1])
+                    currentRunData['eOut'][i] = float(matches[1])
+                    i += 1
 
         print('data: ', currentRunData)
-        if jsonData:
-            if jsonData[length]:
-                jsonData[length][energy] = currentRunData
-            else:
-                self.Merge(jsonData, {length: {energy: currentRunData}})
-        else:
-            jsonData[length] = {energy: currentRunData}
 
-
-        with open(dbFile, 'w') as dbFileHandle:
-            json.dump(jsonData, dbFileHandle)
+        url = self.url + 'api/v1/matDB/' + self.mats[0] + '/' + self.lengths[0] + '/add'
+        mat = requests.put(url, currentRunData)
+        print('req: ' + mat.json())
 
     def run(self, lock, sem):
         baseRun = self.dirProps['baseRun']

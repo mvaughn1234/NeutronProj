@@ -15,7 +15,7 @@ const LenSchema = new Schema({
 const LenSetSchema = new Schema({
     len: {
         type: Number,
-        required: true
+        required: true,
     },
     lenSet: [LenSchema]
 });
