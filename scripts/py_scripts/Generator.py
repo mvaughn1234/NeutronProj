@@ -1,5 +1,6 @@
 import os
-import random
+import json
+import re
 from shutil import copy
 from Props import Props
 from functools import reduce
@@ -19,6 +20,10 @@ class Generator:
         self.beamOn = properties.beamOn
         self.dirProps = properties.dirProps
         self.procCount = properties.procCount
+        self.energyMin = properties.energyMin
+        self.energyMax = properties.energyMax
+        self.numBins = properties.numBins
+        self.scale = properties.scale
 
         self.matLines = []
         self.lenLines = []
@@ -39,6 +44,7 @@ class Generator:
                    '/testhadr/det/setRadius\n': lenLinesConcat,
                    '/gun/energy\n': '/gun/energy {} MeV\n'.format(self.energy),
                    '/analysis/setFileName\n': '/analysis/setFileName {}\n'.format(self.destFileName),
+                   '/analysis/setFileName\n': '/analysis/setFileName {}\n'.format(self.destFileName),
                    '/run/printProgress\n': '/run/printProgress {}\n'.format(self.printProg),
                    '/run/beamOn\n': '/run/beamOn {}\n'.format(self.beamOn)
                    }
@@ -50,11 +56,35 @@ class Generator:
         src.close()
         dst.close()
 
-    def store(self, accumulatedMatsDB):
-        pass
+    def Merge(self,dict1,dict2):
+        return dict1.update(dict2)
+
+    def store(self, data, length, energy, dbFile):
+        jsonData = {}
+        if (os.path.isfile(dbFile)):
+            with open(dbFile, 'r') as dbFileHandle:
+                jsonData = json.load(dbFileHandle)
+
+        currentRunData = {}
+        with open(data, 'r') as asciiFile:
+            for line in asciiFile:
+                matches = re.findall('(\-?\d+\.\d+e[\-\+]\d+)', line)
+                if matches:
+                    currentRunData[float(matches[0])] = float(matches[1])
+
+        print('data: ', currentRunData)
+        if jsonData:
+            if jsonData[length]:
+                jsonData[length][energy] = currentRunData
+            else:
+                self.Merge(jsonData, {length: {energy: currentRunData}})
+        else:
+            jsonData[length] = {energy: currentRunData}
+
+        with open(dbFile, 'w') as dbFileHandle:
+            json.dump(jsonData, dbFileHandle)
 
     def run(self, lock, sem):
-        lock.acquire(True)
         baseRun = self.dirProps['baseRun']
         curRoot = self.dirProps['pyScRoot']
         resultsRoot = self.dirProps['resRoot']
@@ -63,20 +93,20 @@ class Generator:
         except IOError:
             print(IOError.message)
             print('Couldn\'t open base run file {}.', self.dirProps['baseRun'])
-        tempFileName = curRoot + '/' + str(random.randint(0, 99999999999)) + ".mac"
-        tempFileName2 = curRoot + '/' + str(random.randint(0, 99999999999)) + ".mac"
-        destFilePath = resultsRoot + '/' + '_'.join((self.mats[0] + '/' + str(self.lengths[0]) + '/').split('.'))
+        baseFileName = '-'.join(
+            (self.mats[0] + '_' + str(self.lengths[0]) + '_' + str(self.energy)).split('.'))
+        tempFileName = curRoot + '/' + baseFileName + "_temp.mac"
+        tempFileName2 = curRoot + '/' + baseFileName + "_final.mac"
+        destFilePath = resultsRoot + '/' + '-'.join((self.mats[0] + '/' + str(self.lengths[0]) + '/').split('.'))
         if not os.path.exists(destFilePath):
             os.makedirs(destFilePath)
-        self.destFileName = resultsRoot + '/' + '_'.join(
-            (self.mats[0] + '/' + str(self.lengths[0]) + '/' + self.mats[0] + '_' + str(self.lengths[0]) + '_' + str(
-                self.energy)).split('.')) + '.root'
-        self.logFileName = curRoot + '/' + '_'.join(
-            (self.mats[0] + '_' + str(self.lengths[0]) + '_' + str(self.energy)).split('.')) + '_log.out'
+        self.destFileName = destFilePath + baseFileName + '.root'
+        self.logFileName = curRoot + '/' + baseFileName + '_log.out'
+        lock.acquire(True)
         copy(self.dirProps['baseRun'], tempFileName)
+        lock.release()
         srcRunFile = open(tempFileName, "r")
         dstRunFile = open(tempFileName2, "w+")
-        lock.release()
         self.genLines()
         self.editRunFile(srcRunFile, dstRunFile)
         os.remove(tempFileName)
@@ -89,8 +119,14 @@ class Generator:
         # for i in range(0,99999999):
         #     j += 1
 
-        os.remove(tempFileName2)
-        os.remove(self.destFileName)
-        os.remove(self.logFileName)
+        # os.remove(self.destFileName)
+        # os.remove(self.logFileName)
+        dbFile = resultsRoot + '/' + self.mats[0] + '/' + self.mats[0] + '_' + str(self.beamOn) + '_' + '-'.join((str(
+            self.energyMin) + '_' + str(self.energyMax) + '_' + str(self.numBins) + '_' + '@' + self.scale).split(
+            '.')) + '.json'
+        data = destFilePath + baseFileName + '.ascii'
+        self.store(data, str(self.lengths[0]), str(self.energy), dbFile)
         print("done " + str(os.getpid()))
+        print("Done material :: file location: ", dbFile);
         sem.release()
+        # os.remove(tempFileName2)

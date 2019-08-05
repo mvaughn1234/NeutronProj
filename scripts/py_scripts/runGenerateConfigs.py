@@ -13,15 +13,6 @@ from Props import Props
 # run all gen objects together
 
 def createProps(configJSON):
-    # geantProps = configJSON['geantProps']
-    # procCount = geantProps['numProcs']
-    # precision = geantProps['precision']
-    # beamOn = geantProps['beamOn']
-    # printProg = geantProps['printProg']
-
-    procCount = 20
-    precision = 10000
-    printProg = 1000
     projRoot = '/home/student/geant4/NeutronProj'
     buildDir = projRoot + '/build'
     resRoot = projRoot + '/results'
@@ -33,8 +24,20 @@ def createProps(configJSON):
                 'buildDir': buildDir,
                 'resRoot': resRoot}
 
+    gprops = configJSON[0]['geantProps']
+    globalProps = {
+        'procCount': gprops['procCount'],
+        'beamOn': gprops['precision'],
+        'printProg': 1000,
+        'energyMin': gprops['energyMin'],
+        'energyMax': gprops['energyMax'],
+        'numBins': gprops['numBins'],
+        'scale': gprops['scale'],
+        'dirProps': dirProps
+    }
+
     propSets = []
-    for configMatSet in configJSON:
+    for configMatSet in configJSON[1:-1]:
         for enSet in configMatSet['configs']:
             # print('lenset: ', enSet)
             mats = enSet['matList']
@@ -44,15 +47,14 @@ def createProps(configJSON):
                 'mats': mats,
                 'energy': energy,
                 'lengths': lengths,
-                'printProg': printProg,
-                'beamOn': precision,
-                'procCount': procCount,
-                'dirProps': dirProps
             }
+            print('props pre: ', properties)
+            properties.update(globalProps)
+            print('props post: ', properties)
             prop = Props(properties)
             propSets.append(prop)
 
-    return propSets, procCount
+    return propSets, globalProps['procCount']
 
 
 def createGenerator(props):
@@ -63,14 +65,14 @@ def createGenerator(props):
 def runGenerators(generators, procCount):
     sharedSem = Semaphore(procCount)
     sharedLock = Lock()
-    for i in range(0, len(generators)):
+    for i in range(0, 3):
         Process(target=generators[i].run, args=(sharedLock, sharedSem,)).start()
+    print('super duper done')
 
 
 if __name__ == '__main__':
     if sys.argv:
         configsPath = sys.argv[1]
-        print('path: ', sys.argv[1])
         with open(configsPath, 'r') as readFile:
             configs = json.load(readFile)
         propSets, procCount = createProps(configs)
@@ -78,6 +80,7 @@ if __name__ == '__main__':
         for propSet in propSets:
             generators.append(createGenerator(propSet))
         runGenerators(generators, procCount)
+
 
     else:
         print('Need to pass carbon path of config file')
