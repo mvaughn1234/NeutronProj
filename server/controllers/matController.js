@@ -1,7 +1,26 @@
 const Mat = require('../models/Mat');
 
+const checkMatList = (mats) => {
+    if (mats.length === 0){
+        const tin = new Mat({name: 'tin', installed: true, color:'#6dbf88'});
+        const moly = new Mat({name: 'moly', installed: true, color:'#b28034'});
+        const graphite = new Mat({name: 'graphite', installed: true, color:'#b7b7b7'});
+        const bh303 = new Mat({name: 'bh303', installed: true, color:'#bf5bac'});
+        const beryllium = new Mat({name: 'beryllium', installed: true, color:'#4673be'});
+        tin.save();
+        moly.save();
+        graphite.save();
+        bh303.save();
+        beryllium.save();
+        return [tin,moly,graphite,bh303,beryllium];
+    }else{
+        return mats;
+    }
+};
+
 exports.getMatList = (req, res) => {
     Mat.find()
+        .then(mats => checkMatList(mats))
         .then(mats => res.json(mats));
 };
 

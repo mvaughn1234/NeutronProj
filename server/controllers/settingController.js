@@ -1,13 +1,11 @@
 const Setting = require('../models/Setting');
+const Mat = require('../models/Mat');
 
 const checkSetting = (settings) => {
     if (settings.length === 0){
+        const matList = Mat.find();
         const setting = new Setting({
-            matList: [{name: 'tin', installed: true, color:'#6dbf88'},
-                {name: 'moly', installed: true, color:'#b28034'},
-                {name: 'graphite', installed: true, color:'#b7b7b7'},
-                {name: 'bh303', installed: true, color:'#bf5bac'},
-                {name: 'beryllium', installed: true, color:'#4673be'}],
+            matList: matList,
             settings: [
                 {
                     title: 'Set Scale',
