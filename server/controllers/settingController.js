@@ -46,7 +46,7 @@ const checkSetting = (settings) => {
                 },
                 {
                     title: 'Precision',
-                    description: 'Number of neutrons fired during simulation',
+                    description: 'Number of neutrons fired during simulation (beamOn)',
                     input: 'number',
                     options: [],
                     currentValue: '1000'

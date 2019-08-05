@@ -19,5 +19,3 @@ for e in energy:
   subprocess.call(["sed -i '26c\/gun/energy %g MeV' run1.mac" % e],shell=True)
   subprocess.call(['./Hadr06 run1.mac > nohup.out &'],shell=True)
   time.sleep(10)
-
-
