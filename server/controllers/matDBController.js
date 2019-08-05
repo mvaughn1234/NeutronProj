@@ -30,7 +30,7 @@ exports.addDataSet = (req,res) => {
                     })
             }else{
                 console.log('here');
-                MatDB.update({'mat.name': req.params.name, 'data.length': req.params.length},
+                MatDB.update({'mat.name': req.params.name, 'data.len': req.params.length},
                     {$push: {'data.$.lenSet': req.body}})
                     .then(matDB => {console.log('here2'); console.log('matDB', matDB); res.json(matDB)})
                     .catch(err => res.status(500).send(err))
