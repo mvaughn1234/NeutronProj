@@ -21,7 +21,7 @@ exports.addDataSet = (req,res) => {
                         if (mat.length === 0){
                             res.status(500).send("Couldn't find material")
                         }else{
-                            const lenSet = {length: req.params.length, lenSet: [req.body]};
+                            const lenSet = {len: req.params.length, lenSet: [req.body]};
                             const newDB = {mat: mat[0], data: [lenSet]};
                             const newMatDB = new MatDB(newDB);
                             newMatDB.save();
