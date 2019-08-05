@@ -25,7 +25,7 @@ exports.addDataSet = (req,res) => {
                             const newDB = {mat: mat[0], data: [lenSet]};
                             const newMatDB = new MatDB(newDB);
                             newMatDB.save();
-                            res.stats(201).send(newMatDB);
+                            res.status(201).send(newMatDB);
                         }
                     })
             }else{
