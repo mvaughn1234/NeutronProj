@@ -5,6 +5,7 @@ from shutil import copy
 from Props import Props
 from functools import reduce
 from mongoengine import connect
+import requests
 
 
 class Generator:
@@ -30,6 +31,8 @@ class Generator:
         self.lenLines = []
         self.destFileName = ''
         self.logFileName = ''
+
+        self.url = 'localhost:5000/api/v1/matDB'
 
     def genLines(self):
         for i in range(0, len(self.mats)):
@@ -61,11 +64,9 @@ class Generator:
         return dict1.update(dict2)
 
     def store(self, data, length, energy, dbFile):
-        jsonData = {}
-        if (os.path.isfile(dbFile)):
-            with open(dbFile, 'r') as dbFileHandle:
-                jsonData = json.load(dbFileHandle)
+        db = connect('test','mongodb+srv://dbuser:Password@cluster0-zehp8.mongodb.net/test?retryWrites=true&w=majority');
 
+        mat = requests(self.url+'api/v1/')
         currentRunData = {}
         with open(data, 'r') as asciiFile:
             for line in asciiFile:

@@ -20,10 +20,10 @@ matDBRouter.use('/', (req, res, next)=>{
 });
 
 matDBRouter.route('/').get(matDBController.getMatDBList);
-matDBRouter.route('/:mat').get(matDBController.getMatDB);
+matDBRouter.route('/:name').get(matDBController.getMatDB);
 matDBRouter.route('/new').post(matDBController.createMatDB);
-matDBRouter.route('/:mat/set/add').put(matDBController.addDataSet);
+matDBRouter.route('/:name/:length/add').put(matDBController.addDataSet);
 // matDBRouter.route('/:mat/edit').put(matDBController.editMatDB);
-matDBRouter.route('/:mat/delete').delete(matDBController.deleteMatDB);
+matDBRouter.route('/:name/:length/delete').delete(matDBController.deleteMatDB);
 
 module.exports = matDBRouter;

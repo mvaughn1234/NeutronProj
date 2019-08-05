@@ -66,9 +66,9 @@ def createGenerator(props):
 def runGenerators(generators, procCount):
     sharedSem = Semaphore(procCount)
     sharedLock = Lock()
-    for i in range(0, 3):
+    for i in range(0, len(generators)):
         Process(target=generators[i].run, args=(sharedLock, sharedSem,)).start()
-    print('super duper done')
+    print('gen done')
 
 
 if __name__ == '__main__':
