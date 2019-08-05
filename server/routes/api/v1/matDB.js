@@ -21,7 +21,6 @@ matDBRouter.use('/', (req, res, next)=>{
 
 matDBRouter.route('/').get(matDBController.getMatDBList);
 matDBRouter.route('/:name').get(matDBController.getMatDB);
-matDBRouter.route('/new').post(matDBController.createMatDB);
 matDBRouter.route('/:name/:length/add').put(matDBController.addDataSet);
 // matDBRouter.route('/:mat/edit').put(matDBController.editMatDB);
 matDBRouter.route('/:name/:length/delete').delete(matDBController.deleteMatDB);
