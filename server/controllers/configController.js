@@ -121,6 +121,7 @@ let exportToJsonFile = (jsonData) => {
 let transpose = m => m[0].map((x, i) => m.map(x => x[i]));
 
 
+
 exports.runConfigs = (io, Configs) => {
     let eLow, eHigh, numBins, precision, procCount, scale, energy;
     let promises = Setting.find().then(data => data[0]).then(settings => {
