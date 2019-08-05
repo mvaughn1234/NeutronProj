@@ -1,6 +1,7 @@
 import os
 import json
 import re
+import sys
 from shutil import copy
 from Props import Props
 from functools import reduce
@@ -83,6 +84,9 @@ class Generator:
         print('req: ' + mat.json())
 
     def run(self, lock, sem):
+        sys.stdout = open(str(os.getpid()) + ".out", "a", buffering=0)
+        sys.stderr = open(str(os.getpid()) + "_error.out", "a", buffering=0)
+
         baseRun = self.dirProps['baseRun']
         curRoot = self.dirProps['pyScRoot']
         resultsRoot = self.dirProps['resRoot']
