@@ -13,7 +13,7 @@ exports.getMatDB = (req,res) => {
 };
 
 exports.addDataSet = (req,res) => {
-    MatDB.find({'mat.name': req.params.name, 'data.length': req.params.length})
+    MatDB.find({'mat.name': req.params.name, 'data.len': req.params.length})
         .then(matDB => {
             console.log('matDB', matDB);
             if (matDB.length === 0){
