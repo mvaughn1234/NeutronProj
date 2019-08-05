@@ -4,7 +4,7 @@ import re
 from shutil import copy
 from Props import Props
 from functools import reduce
-from mongoengine import Client
+from mongoengine import connect
 
 
 class Generator:
