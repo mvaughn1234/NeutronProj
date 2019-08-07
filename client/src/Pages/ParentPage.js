@@ -19,6 +19,7 @@ class ParentPage extends Component {
             runButtonPhrase: '',
             runButtonActivated: false,
             genConsoleOpen: false,
+            genConsole: '',
             generatingData: false,
             settings: [],
             numGeantSpots: 4,
@@ -179,7 +180,7 @@ class ParentPage extends Component {
     componentDidMount() {
         console.log('app mount');
         this.initSettings();
-        this.state.socket.on('runConfigsClient', data => console.log(JSON.stringify(data)))
+        this.state.socket.on('runConfigsClient', data => this.setState({genConsole: data}))
     };
 
     printProps() {

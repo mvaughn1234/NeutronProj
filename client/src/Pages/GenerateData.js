@@ -46,6 +46,7 @@ class GenerateData extends Component {
                         <Route path={`${this.state.url}/gen2`} component={Gen2}/>
                         <Container className='overlay'>
                             <Jumbotron className='darkest h-75 mt-3 mb-3 disableBlur'/>
+                            <p>{this.props.global.genConsole}</p>
                             <ProgressBar className='disableBlur'/>
                             <Button onClick={this.props.closeGenConsole} disabled={!this.props.global.generatingData}
                                     className='dark disableBlur'>Close</Button>
