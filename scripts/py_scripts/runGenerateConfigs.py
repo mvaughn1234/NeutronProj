@@ -1,5 +1,6 @@
 from multiprocessing import Process, Lock, Semaphore
 import subprocess
+import os
 from Generator import Generator
 import sys
 import json
@@ -73,7 +74,7 @@ def runGenerators(generators, procCount):
 
 
 if __name__ == '__main__':
-    subprocess.run('G410')
+    os.system('$G410')
     if sys.argv:
         configsPath = sys.argv[1]
         with open(configsPath, 'r') as readFile:
