@@ -53,6 +53,7 @@ def createProps(configJSON):
             prop = Props(properties)
             propSets.append(prop)
 
+    print ('propsJson: ', configJSON)
     print ('propSets: ', propSets)
     return propSets, globalProps['procCount']
 
