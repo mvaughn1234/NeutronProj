@@ -38,7 +38,7 @@ def createProps(configJSON):
     }
 
     propSets = []
-    for configMatSet in configJSON[1:-1]:
+    for configMatSet in configJSON[1:]:
         for enSet in configMatSet['configs']:
             # print('lenset: ', enSet)
             mats = enSet['matList']

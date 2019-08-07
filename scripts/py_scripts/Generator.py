@@ -85,8 +85,8 @@ class Generator:
         print('-'*30+'\n'+'response: \n\t', str(mat)+'\n'+'='*30)
 
     def run(self, lock, sem):
-        sys.stdout = open(str(os.getpid()) + ".out", "a")
-        sys.stderr = open(str(os.getpid()) + "_error.out", "a")
+        # sys.stdout = open(str(os.getpid()) + ".out", "a")
+        # sys.stderr = open(str(os.getpid()) + "_error.out", "a")
 
         baseRun = self.dirProps['baseRun']
         curRoot = self.dirProps['pyScRoot']
