@@ -52,7 +52,7 @@ io.on('connection', (socket) => {
   console.log('connected to socket ', socket.id);
   socket.on('runConfigs', (Configs) => {
     console.log('socketData: ', JSON.stringify(Configs));
-    configController.runConfigs(io,Configs);
+    configController.runConfigs(socket,Configs);
   });
 });
 

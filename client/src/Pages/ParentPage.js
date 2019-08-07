@@ -25,7 +25,7 @@ class ParentPage extends Component {
             genListSingle: [],
             genListMulti: [],
             configs: [],
-            defaultMat: {name: 'vacuum', installed: true, color: '#000000'},
+            defaultMat: {name: 'Galactic', installed: true, color: '#000000'},
             socket: io('http://10.103.72.187:5001'),
         };
         this.changeSettings = this.changeSettings.bind(this);
@@ -65,10 +65,10 @@ class ParentPage extends Component {
     genListRemove(index) {
         let temp = this.state.genListSingle.slice();
         temp[index] = {
-            mat: {name: 'vacuum', color: '#000000', installed: true},
+            mat: {name: 'Galactic', color: '#000000', installed: true},
             len: {single: true, min: 10, max: 100, part: 30},
             html: <li className='mx-1 my-1 list-unstyled d-flex align-items-stretch' key={index}><MatCard
-                mat={{name: 'vacuum', color: '#000000', installed: true}} indx={index}
+                mat={{name: 'Galactic', color: '#000000', installed: true}} indx={index}
                 len={{single: true, min: 10, max: 100, part: 30}} mode='entry' updateGenList={this.updateGenList}
                 genListRemove={this.genListRemove}/>
             </li>
@@ -94,12 +94,12 @@ class ParentPage extends Component {
     // by posting each config to server and storing resulting ids in configs list
     // Second, post each configs in config list to run path
     generateData() {
-        let queuedConfigs = [...this.state.genListSingle.filter(matConfig => matConfig.mat.name !== 'vacuum'), ...this.state.genListMulti];
+        let queuedConfigs = [...this.state.genListSingle.filter(matConfig => matConfig.mat.name !== 'Galactic'), ...this.state.genListMulti];
         if (queuedConfigs.length) {
             console.log('queuedConfigs: ', queuedConfigs);
             this.setState({genConsoleOpen: true});
             this.setState({generatingData: true});
-            let promises = [...this.state.genListSingle.filter(matConfig => matConfig.mat.name !== 'vacuum').map((matConfig, indx) => {
+            let promises = [...this.state.genListSingle.filter(matConfig => matConfig.mat.name !== 'Galactic').map((matConfig, indx) => {
                 console.log('test1: ', matConfig);
                 let newConfig = {
                     mode: 'single',
@@ -165,10 +165,10 @@ class ParentPage extends Component {
         let list = [];
         for (i; i < this.state.numGeantSpots; i++) {
             list.push({
-                mat: {name: 'vacuum', color: '#000000', installed: true},
+                mat: {name: 'Galactic', color: '#000000', installed: true},
                 len: {single: true, min: 10, max: 100, part: 30},
                 html: <li className='mx-1 my-1 list-unstyled d-flex align-items-stretch' key={i}><MatCard
-                    mat={{name: 'vacuum', color: '#000000', installed: true}} indx={i}
+                    mat={{name: 'Galactic', color: '#000000', installed: true}} indx={i}
                     len={{single: true, min: 10, max: 100, part: 30}} mode='entry'
                     updateGenList={this.updateGenList} genListRemove={this.genListRemove}/></li>
             });

@@ -85,8 +85,8 @@ class Generator:
         print('-'*30+'\n'+'response: \n\t', str(mat)+'\n'+'='*30)
 
     def run(self, lock, sem):
-        # sys.stdout = open(str(os.getpid()) + ".out", "a", buffering=0)
-        # sys.stderr = open(str(os.getpid()) + "_error.out", "a", buffering=0)
+        sys.stdout = open(str(os.getpid()) + ".out", "a")
+        sys.stderr = open(str(os.getpid()) + "_error.out", "a")
 
         baseRun = self.dirProps['baseRun']
         curRoot = self.dirProps['pyScRoot']
@@ -128,8 +128,10 @@ class Generator:
             self.energyMin) + '_' + str(self.energyMax) + '_' + str(self.numBins) + '_' + '@' + self.scale).split(
             '.')) + '.json'
         data = destFilePath + baseFileName + '.ascii'
+        lock.acquire(True)
         self.store(data, str(self.lengths[0]), str(self.energy), dbFile)
         print("done " + str(os.getpid()))
         print("Done material :: file location: ", dbFile);
+        lock.release()
         sem.release()
-        # os.remove(tempFileName2)
+        os.remove(tempFileName2)

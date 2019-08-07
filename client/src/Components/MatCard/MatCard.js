@@ -30,7 +30,7 @@ class MatCard extends Component {
                     case 'entry':
                         return {outline: '1px dashed #000000', width: '120px'};
                     case 'card' :
-                        return this.props.mat.name === 'vacuum' ? {display: 'none'} :
+                        return this.props.mat.name === 'Galactic' ? {display: 'none'} :
                             {
                                 background: 'light',
                                 border: '1px solid gray',
@@ -39,7 +39,7 @@ class MatCard extends Component {
                                 opacity: 0.5
                             };
                     case 'list':
-                        return this.props.mat.name === 'vacuum' ? {display: 'none'} :
+                        return this.props.mat.name === 'Galactic' ? {display: 'none'} :
                             {
                                 background: 'white',
                                 border: 'none',
@@ -53,11 +53,11 @@ class MatCard extends Component {
                 switch (this.props.mode) {
                     case 'entry':
                         return {
-                            outline: this.props.mat.name === 'vacuum' ? '1px dashed #000000' : '1px solid #000000',
+                            outline: this.props.mat.name === 'Galactic' ? '1px dashed #000000' : '1px solid #000000',
                             width: '120px'
                         };
                     case 'card' :
-                        return this.props.mat.name === 'vacuum' ? {display: 'none'} :
+                        return this.props.mat.name === 'Galactic' ? {display: 'none'} :
                             {
                                 background: 'light',
                                 border: '1px solid gray',
@@ -65,7 +65,7 @@ class MatCard extends Component {
                                 boxShadow: '0 1px 4px 2px rgba(0,0,0,0.25)'
                             };
                     case 'list':
-                        return this.props.mat.name === 'vacuum' ? {display: 'none'} :
+                        return this.props.mat.name === 'Galactic' ? {display: 'none'} :
                             {
                                 background: 'white',
                                 border: 'none',
@@ -111,7 +111,7 @@ class MatCard extends Component {
             case 'indicator':
                 switch (this.props.mode) {
                     case 'entry':
-                        return (this.props.mat.name === 'vacuum' ? {fontSize: '100px', color: 'black'} :
+                        return (this.props.mat.name === 'Galactic' ? {fontSize: '100px', color: 'black'} :
                             {
                                 fontSize: '100px',
                                 color: this.props.mat.color,
@@ -237,7 +237,7 @@ class MatCard extends Component {
                     <Col style={this.styles('titleWidth')}>
                         <p className='text-center text-darkest'
                            style={this.styles('title')}>
-                            {mat.name !== 'vacuum' ? mat.name : ''}
+                            {mat.name !== 'Galactic' ? mat.name : ''}
                         </p>
                     </Col>
                     {
@@ -254,7 +254,7 @@ class MatCard extends Component {
                     }
                 </Row>
                 {
-                    mode === 'entry' ? mat.name === 'vacuum' ?
+                    mode === 'entry' ? mat.name === 'Galactic' ?
                         <Row><Col className='col-12'><p className='d-flex justify-content-center'
                                                         style={this.styles('indicator')}>+</p></Col></Row>
                         : <Row><Col className={'d-flex justify-content-center'}><Button
@@ -265,7 +265,7 @@ class MatCard extends Component {
                         : ''
                 }
                 {
-                    mode === 'entry' && mat.name !== 'vacuum' ?
+                    mode === 'entry' && mat.name !== 'Galactic' ?
                         <Row>
                             <Container className='m-0 p-0'>
                                 {/*<br/><br/><br/>*/}

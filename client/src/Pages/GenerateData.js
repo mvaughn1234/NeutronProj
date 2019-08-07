@@ -60,7 +60,7 @@ class GenerateData extends Component {
                         <ul className='m-0 p-0' style={{display: 'flex'}}>
                             {this.props.global.settings.matList ? this.props.global.settings.matList.length > 0 ?
                                 this.props.global.settings.matList.map((mat, index) =>
-                                    mat.name !== 'vacuum' ?
+                                    mat.name !== 'Galactic' ?
                                         <li className='mx-1 my-1 list-unstyled d-flex align-items-stretch' key={index}>
                                             <MatCard
                                                 mat={mat} len={{single: true, min: 10, max: 100, part: 30}}

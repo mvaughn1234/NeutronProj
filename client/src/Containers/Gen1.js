@@ -6,15 +6,15 @@ class Gen1 extends Component {
     constructor(props) {
         super(props);
         this.genEntries = this.genEntries.bind(this);
-        this.singleVacuum = this.singleVacuum.bind(this);
+        this.singleGalactic = this.singleGalactic.bind(this);
     }
 
     genEntries(index,mat) {
         // this.props.ge
     }
 
-    singleVacuum(){
-        let item = this.props.global.genListSingle.find((genItem) => genItem.mat.name === 'vacuum');
+    singleGalactic(){
+        let item = this.props.global.genListSingle.find((genItem) => genItem.mat.name === 'Galactic');
         if(item){
             return item.html;
         }else{
@@ -37,8 +37,8 @@ class Gen1 extends Component {
                             <Row>
                                 <Col className='col-12 overflow-auto'>
                                     <ul className='m-0 p-0 d-flex' style={{display: 'flex'}}>
-                                        {this.singleVacuum()}
-                                        {this.props.global.genListSingle.filter((genItem) => genItem.mat.name !== 'vacuum').map(genItem => genItem.html).reverse()}
+                                        {this.singleGalactic()}
+                                        {this.props.global.genListSingle.filter((genItem) => genItem.mat.name !== 'Galactic').map(genItem => genItem.html).reverse()}
                                     </ul>
                                 </Col>
                             </Row>

@@ -135,7 +135,7 @@ class SetProperties extends Component {
                                     <ListGroup className='p-0 m-0 list-group-flush'>
                                         {this.props.global.settings.matList ? this.props.global.settings.matList.length > 0 ?
                                             this.props.global.settings.matList.map((mat, index) =>
-                                                mat.name !== 'vacuum' ?
+                                                mat.name !== 'Galactic' ?
                                                     <li className='mx-1 my-1 list-unstyled d-flex align-items-stretch'
                                                         key={index}><MatCard
                                                         mat={mat} mode={'list'} updateGenList={this.updateGenList}/>

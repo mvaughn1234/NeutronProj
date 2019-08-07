@@ -6,7 +6,7 @@ const carbonUser = require('./../config/keys').sshKeys.carbonUser;
 const carbonPass = require('./../config/keys').sshKeys.carbonPass;
 const rb_gen_path = require('./../config/directories').sshPaths.rb_gen_path;
 const rb_gen_path_local = require('./../config/directories').paths.rb_gen_path;
-const io = require('socket.io');
+// const io = require('socket.io');
 const logspace = require('logspace');
 const linspace = require('linspace');
 const fs = require('fs');
@@ -72,7 +72,7 @@ let exportToJsonFile = (jsonData) => {
 let transpose = m => m[0].map((x, i) => m.map(x => x[i]));
 
 
-exports.runConfigs = (io, Configs) => {
+exports.runConfigs = (socket, Configs) => {
     let eLow, eHigh, numBins, precision, procCount, scale, energy;
     let promises = Setting.find().then(data => data[0]).then(settings => {
         eLow = Number(settings.settings.filter(element => element.title === 'Energy Min')[0].currentValue) * (10 ** -3);
@@ -204,15 +204,20 @@ exports.runConfigs = (io, Configs) => {
             });
 
             const generator = spawn('python3', ['/home/student/geant4/NeutronProj/scripts/py_scripts/runGenerateConfigs.py', fullPath])
+            generator.stdout.setEnconding('utf-8');
             generator.stdout.on('data', (data) => {
+                socket.emit('stdout: ', data);
                 console.log(`stdout: ${data}`)
             });
 
+            generator.stderr.setEnconding('utf-8');
             generator.stderr.on('data', (data) => {
+                socket.emit('stderr: ', data);
                 console.log(`stderr: ${data}`)
             });
 
             generator.on('close', (code) => {
+                socket.emit('close with code: ', code);
                 console.log(`generator exited with code ${code}`)
             })
 
