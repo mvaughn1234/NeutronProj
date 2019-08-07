@@ -201,7 +201,7 @@ exports.runConfigs = (socket, Configs) => {
                 })
             });;//a
 
-            const generator = execFile('G410; python3', ['/home/student/geant4/NeutronProj/scripts/py_scripts/runGenerateConfigs.py', fullPath], (err, stdout, stderr) => {
+            const generator = execFile('python3', ['/home/student/geant4/NeutronProj/scripts/py_scripts/runGenerateConfigs.py', fullPath], {env: 'G410'}, (err, stdout, stderr) => {
                 if (err) {
                     socket.emit('runConfigsClient', 'exited with err: ' + err);
                     console.log(`generator exited with code ${err}`)
