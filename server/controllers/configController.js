@@ -208,11 +208,11 @@ exports.runConfigs = (socket, Configs) => {
                     socket.emit('close with code: ', err);
                     console.log(`generator exited with code ${err}`)
                 }
-                socket.emit('stdout: ', data);
-                console.log(`stdout: ${data}`)
+                socket.emit('stdout: ', stdout);
+                console.log(`stdout: ${stdout}`)
 
-                socket.emit('stderr: ', data);
-                console.log(`stderr: ${data}`)
+                socket.emit('stderr: ', stderr);
+                console.log(`stderr: ${stderr}`)
             });
         }));
 };
