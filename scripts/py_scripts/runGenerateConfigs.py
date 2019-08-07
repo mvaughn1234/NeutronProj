@@ -68,7 +68,7 @@ def runGenerators(generators, procCount):
     sharedLock = Lock()
     for i in range(0, len(generators)):
         Process(target=generators[i].run, args=(sharedLock, sharedSem,)).start()
-    print('gen done')
+    print('gen started')
 
 
 if __name__ == '__main__':
