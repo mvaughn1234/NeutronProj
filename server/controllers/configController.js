@@ -116,7 +116,6 @@ exports.runConfigs = (socket, Configs) => {
 
     promises.then(configs =>
         Promise.all(configs).then(configSet => {
-            console.log('pre: ', configSet);
             let temp = [{
                 'geantProps': {
                     'procCount': procCount,
@@ -127,7 +126,6 @@ exports.runConfigs = (socket, Configs) => {
                     'scale': scale
                 }
             }, ...configSet];
-            console.log('post: ', temp);
             let data = JSON.stringify(temp);
             let curseconds = Date.now();
             //     REMOTE:
