@@ -80,9 +80,9 @@ class Generator:
         print('data: ', currentRunData)
 
         url = self.url + 'api/v1/matDB/' + self.mats[0] + '/' + str(self.lengths[0]) + '/add'
-        print ('url: ', url)
         mat = requests.put(url, currentRunData)
-        print('req: ' + mat.json())
+        print('-'*30+'\n'+'data: \n\t', str(currentRunData)+'\n'+'='*30)
+        print('-'*30+'\n'+'response: \n\t', str(mat)+'\n'+'='*30)
 
     def run(self, lock, sem):
         # sys.stdout = open(str(os.getpid()) + ".out", "a", buffering=0)
