@@ -201,7 +201,7 @@ exports.runConfigs = (socket, Configs) => {
                 })
             });;//a
 
-            const generator = spawn('G410; python3', ['/home/student/geant4/NeutronProj/scripts/py_scripts/runGenerateConfigs.py', fullPath]);
+            const generator = spawn('G410; python3', ['/home/student/geant4/NeutronProj/scripts/py_scripts/runGenerateConfigs.py', fullPath], {shell: true});
             generator.stdout.on('data', (stdout) => {
                 socket.emit('runConfigsClient', 'stdout: ' + stdout);
                 console.log(`stdout: ${stdout}`)
