@@ -179,7 +179,9 @@ class ParentPage extends Component {
     componentDidMount() {
         console.log('app mount');
         this.initSettings();
-        this.state.socket.on('runConfig', data => console.log('runConfig: ', JSON.stringify(data)))
+        this.state.socket.on('stdout: ', data => console.log('stdout: ', JSON.stringify(data)))
+        this.state.socket.on('stderr: ', data => console.log('stderr: ', JSON.stringify(data)))
+        this.state.socket.on('close with code: ', data => console.log('close with code: ', JSON.stringify(data)))
     };
 
     printProps() {

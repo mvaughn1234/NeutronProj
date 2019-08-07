@@ -204,13 +204,11 @@ exports.runConfigs = (socket, Configs) => {
             });
 
             const generator = spawn('python3', ['/home/student/geant4/NeutronProj/scripts/py_scripts/runGenerateConfigs.py', fullPath])
-            generator.stdout.setEnconding('utf-8');
             generator.stdout.on('data', (data) => {
                 socket.emit('stdout: ', data);
                 console.log(`stdout: ${data}`)
             });
 
-            generator.stderr.setEnconding('utf-8');
             generator.stderr.on('data', (data) => {
                 socket.emit('stderr: ', data);
                 console.log(`stderr: ${data}`)
