@@ -201,16 +201,18 @@ exports.runConfigs = (socket, Configs) => {
                 })
             });;//a
 
-            const generator = execFile('python3', ['/home/student/geant4/NeutronProj/scripts/py_scripts/runGenerateConfigs.py', fullPath], {env: 'G410'}, (err, stdout, stderr) => {
-                if (err) {
-                    socket.emit('runConfigsClient', 'exited with err: ' + err);
-                    console.log(`generator exited with code ${err}`)
-                }
+            const generator = spawn('G410; python3', ['/home/student/geant4/NeutronProj/scripts/py_scripts/runGenerateConfigs.py', fullPath]);
+            generator.stdout.on('data', (stdout) => {
                 socket.emit('runConfigsClient', 'stdout: ' + stdout);
                 console.log(`stdout: ${stdout}`)
-
+            });
+            generator.stderr.on('data', (stderr) => {
                 socket.emit('runConfigsClient', 'stderr: ' + stderr);
                 console.log(`stderr: ${stderr}`)
+            });
+            generator.on('close', (code) => {
+                socket.emit('runConfigsClient', 'exited with err: ' + code);
+                console.log(`generator exited with code ${code}`)
             });
         }));
 };
