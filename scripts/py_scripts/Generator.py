@@ -33,7 +33,7 @@ class Generator:
         self.destFileName = ''
         self.logFileName = ''
 
-        self.url = 'https://localhost:5000/api/v1/matDB'
+        self.url = 'https://10.103.72.187:5000/'
 
     def genLines(self):
         for i in range(0, len(self.mats)):
@@ -80,6 +80,7 @@ class Generator:
         print('data: ', currentRunData)
 
         url = self.url + 'api/v1/matDB/' + self.mats[0] + '/' + str(self.lengths[0]) + '/add'
+        print ('url: ', url)
         mat = requests.put(url, currentRunData)
         print('req: ' + mat.json())
 
