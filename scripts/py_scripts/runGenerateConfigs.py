@@ -49,9 +49,7 @@ def createProps(configJSON):
                 'energy': energy,
                 'lengths': lengths,
             }
-            print('props pre: ', properties)
             properties.update(globalProps)
-            print('props post: ', properties)
             prop = Props(properties)
             propSets.append(prop)
 

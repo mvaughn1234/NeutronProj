@@ -1,7 +1,7 @@
 const Config = require('../models/Config');
 const Setting = require('../models/Setting');
 const genData = require('./../scripts/genData');
-const {spawn} = require('child_process');
+const {spawn, execFile} = require('child_process');
 const carbonUser = require('./../config/keys').sshKeys.carbonUser;
 const carbonPass = require('./../config/keys').sshKeys.carbonPass;
 const rb_gen_path = require('./../config/directories').sshPaths.rb_gen_path;
@@ -203,22 +203,16 @@ exports.runConfigs = (socket, Configs) => {
                 })
             });
 
-            const generator = spawn('python3', ['/home/student/geant4/NeutronProj/scripts/py_scripts/runGenerateConfigs.py', fullPath])
-            generator.stdout.on('data', (data) => {
+            const generator = execFile('python3', ['/home/student/geant4/NeutronProj/scripts/py_scripts/runGenerateConfigs.py', fullPath], (err, stdout, stderr) => {
+                if (err) {
+                    socket.emit('close with code: ', err);
+                    console.log(`generator exited with code ${err}`)
+                }
                 socket.emit('stdout: ', data);
                 console.log(`stdout: ${data}`)
-            });
 
-            generator.stderr.on('data', (data) => {
                 socket.emit('stderr: ', data);
                 console.log(`stderr: ${data}`)
             });
-
-            generator.on('close', (code) => {
-                socket.emit('close with code: ', code);
-                console.log(`generator exited with code ${code}`)
-            })
-
-
         }));
 };
