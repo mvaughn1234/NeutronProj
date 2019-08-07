@@ -15,6 +15,7 @@ class GenerateData extends Component {
     }
 
     render() {
+        let consoleText = this.props.global.genConsole;
         return (
             <Container>
                 <Row>
@@ -46,7 +47,7 @@ class GenerateData extends Component {
                         <Route path={`${this.state.url}/gen2`} component={Gen2}/>
                         <Container className='overlay'>
                             <Jumbotron className='darkest h-75 mt-3 mb-3 disableBlur text-white'>
-                                <p>{this.props.global.genConsole}</p>
+                                <p style={{'overflow': 'auto', 'display': 'flex', 'flexDirection': 'column-reverse', 'height': '100%'}}>{consoleText}</p>
                             </Jumbotron>
                             <ProgressBar className='disableBlur'/>
                             <Button onClick={this.props.closeGenConsole} disabled={!this.props.global.generatingData}
