@@ -74,7 +74,7 @@ def runGenerators(generators, procCount):
 
 
 if __name__ == '__main__':
-    os.system('$G410')
+    os.system('G410')
     if sys.argv:
         configsPath = sys.argv[1]
         with open(configsPath, 'r') as readFile:
