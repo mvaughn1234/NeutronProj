@@ -201,7 +201,7 @@ exports.runConfigs = (socket, Configs) => {
                 })
             });;//a
 
-            const generator = spawn('. /home/ubuntu/Downloads/geant/build/geant4make.sh; python3', ['/home/student/geant4/NeutronProj/scripts/py_scripts/runGenerateConfigs.py', fullPath], {shell: true});
+            const generator = spawn('. /home/ubuntu/Downloads/geant/build/geant4make.sh && python3', ['/home/student/geant4/NeutronProj/scripts/py_scripts/runGenerateConfigs.py', fullPath], {shell: true});
             generator.stdout.on('data', (stdout) => {
                 socket.emit('runConfigsClient', 'stdout: ' + stdout+'\n');
                 console.log(`stdout: ${stdout}`)
