@@ -33,7 +33,7 @@ class Generator:
         self.destFileName = ''
         self.logFileName = ''
 
-        self.url = 'https://10.103.72.187:5000/'
+        self.url = 'http://10.103.72.187:5000/'
 
     def genLines(self):
         for i in range(0, len(self.mats)):
