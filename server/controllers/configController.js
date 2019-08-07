@@ -201,7 +201,7 @@ exports.runConfigs = (socket, Configs) => {
                         console.log('wrote the file successfully');
                     })
                 })
-            });
+            });;//a
 
             const generator = execFile('python3', ['/home/student/geant4/NeutronProj/scripts/py_scripts/runGenerateConfigs.py', fullPath], (err, stdout, stderr) => {
                 if (err) {
