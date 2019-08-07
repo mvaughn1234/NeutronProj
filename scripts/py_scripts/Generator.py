@@ -79,7 +79,7 @@ class Generator:
 
         print('data: ', currentRunData)
 
-        url = self.url + 'api/v1/matDB/' + self.mats[0] + '/' + self.lengths[0] + '/add'
+        url = self.url + 'api/v1/matDB/' + self.mats[0] + '/' + str(self.lengths[0]) + '/add'
         mat = requests.put(url, currentRunData)
         print('req: ' + mat.json())
 
