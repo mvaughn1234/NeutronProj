@@ -1,17 +1,19 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const BinSchema = new Schema({
-    bin: Number,
-    value: Number
-});
-
 const LenSchema = new Schema({
     eIn: {
         type: Number,
         required: true
     },
-    eOut: [BinSchema]
+    eOut: {
+        type: Array,
+        required: true
+    },
+    bins: {
+        type: Array,
+        required: true
+    }
 });
 
 const LenSetSchema = new Schema({

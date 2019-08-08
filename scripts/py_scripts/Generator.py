@@ -68,13 +68,14 @@ class Generator:
         db = connect('test',
                      'mongodb+srv://dbuser:Password@cluster0-zehp8.mongodb.net/test?retryWrites=true&w=majority');
 
-        currentRunData = {'eIn': self.energy, 'eOut': []}
+        currentRunData = {'eIn': self.energy, 'eOut': [], 'bins': []}
         i = 0
         with open(data, 'r') as asciiFile:
             for line in asciiFile:
                 matches = re.findall('(\-?\d+\.\d+e[\-\+]\d+)', line)
                 if matches:
-                    currentRunData['eOut'].append({'bin': 10**float(matches[0]), 'value': float(matches[1])})
+                    currentRunData['bins'].append(float(matches[0]))
+                    currentRunData['eOut'].append(float(matches[1]))
                     i += 1
 
         print('data: ', currentRunData)
