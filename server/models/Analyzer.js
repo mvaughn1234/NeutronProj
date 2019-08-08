@@ -29,8 +29,8 @@ let AnalyzerSchema = new Schema({
     curMats: {
         type: Array,
     },
-    matDict: MatDB.Schema,
-    matsAvail: [Mat.Schema],
+    matDict: MatDB.schema,
+    matsAvail: [Mat.schema],
     matsAvailNames: {type: Array},
     iteration: {
         type: Number,
