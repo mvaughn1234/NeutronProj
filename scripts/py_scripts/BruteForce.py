@@ -14,6 +14,7 @@ class BruteForce:
         matNames = self.analysisData.get('matsAvailNames')
         mats = self.analysisData.get('matsAvail')
         matDict = self.analysisData.get('matDict')
+        matTables = set(map(lambda mat: pd.DataFrame(mat), matDict))
         lock.release()
         a = 0
         return []

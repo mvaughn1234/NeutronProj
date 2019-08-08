@@ -44,7 +44,13 @@ if __name__ == '__main__':
             pass
         matDict = {}
         for matDB in matData:
-            matDict[matDB['mat']['name']] = matDB['data']
+            temp = {}
+            for lenSet in matDB['data']:
+                temp2 = {}
+                for eSet in lenSet['lenSet']:
+                    temp2[eSet['eIn']] = eSet['eOut']
+                temp[lenSet['len']] = temp2
+            matDict[matDB['mat']['name']] = temp
         temp = {
             'eIn': analysisSeed['eIn'],
             'eDes': analysisSeed['eDes'],
