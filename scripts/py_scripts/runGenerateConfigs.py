@@ -84,6 +84,5 @@ if __name__ == '__main__':
             generators.append(createGenerator(propSet))
         runGenerators(generators, procCount)
 
-
     else:
         print('Need to pass carbon path of config file')

@@ -16,53 +16,20 @@ class AnalyzeData extends Component {
             url: this.props.url,
             outerPageCorner: 15,
             innerPageCorner: 10,
-            inputEnergy: [],
-            desiredEnergy: [],
-            outputEnergy: [],
             inputDim: {width: 400, height: 200},
             outputDim: {width: 250, height: 125},
             viewOuter: 0,
             viewInner: 0,
-            weights: {accuracy: 1, weight: 0, size: 0, cost: 0},
             log: '',
-            currentConfiguration: [{mat: 'tin', color: 'blue1'},
-                {mat: 'moly', color: 'blue3'},
-                {mat: 'bh303', color: 'blue5'},
-                {mat: 'graphite', color: 'blue7'},],
 
         };
-        this.updateInput = this.updateInput.bind(this);
         this.changeViewOuter = this.changeViewOuter.bind(this);
         this.changeViewInner = this.changeViewInner.bind(this);
-        this.changeWeights = this.changeWeights.bind(this);
     }
 
     componentDidMount() {
         this.setState({view: (!this.state.view || 0 === this.state.view.length) ? 'input' : this.state.view});
         // let inputSet =
-    }
-
-    updateInput(e, target) {
-        let tempArr;
-        switch (target) {
-            case 'In':
-                tempArr = this.state.inputEnergy.slice();
-                tempArr[Number(e.target.id)] = Number(e.target.value);
-                this.setState({inputEnergy: tempArr});
-                break;
-            case 'desOut':
-                tempArr = this.state.desiredEnergy.slice();
-                tempArr[Number(e.target.id)] = Number(e.target.value);
-                this.setState({desiredEnergy: tempArr});
-                break;
-            case 'Out':
-                tempArr = this.state.outputEnergy.slice();
-                tempArr[Number(e.target.id)] = Number(e.target.value);
-                this.setState({outputEnergy: tempArr});
-                break;
-            default:
-                break;
-        }
     }
 
     changeViewOuter(e, viewOuter) {
@@ -71,11 +38,6 @@ class AnalyzeData extends Component {
 
     changeViewInner(e, viewInner) {
         this.setState({viewInner});
-    }
-
-    changeWeights(e, weights) {
-        console.log(weights);
-        this.setState({weights});
     }
 
     render() {
@@ -104,14 +66,14 @@ class AnalyzeData extends Component {
                                         <Row className='m-0 p-0'>
                                             {this.state.viewInner === 0 ?
                                                 <Form className='overflow-auto' style={{height: '300px'}}>
-                                                    <DataChart type={'In'} data={this.state.inputEnergy}
-                                                               updateInput={this.updateInput}
+                                                    <DataChart type={'In'} data={this.props.global.eIn}
+                                                               updateInput={this.props.updateInput}
                                                                settings={this.props.global.settings.settings}/>
                                                 </Form>
                                                 :
                                                 <Form className='overflow-auto' style={{height: '300px'}}>
-                                                    <DataChart type={'desOut'} data={this.state.desiredEnergy}
-                                                               updateInput={this.updateInput}
+                                                    <DataChart type={'desOut'} data={this.props.global.eDes}
+                                                               updateInput={this.props.updateInput}
                                                                settings={this.props.global.settings.settings}/>
                                                 </Form>
                                             }
@@ -149,7 +111,7 @@ class AnalyzeData extends Component {
                                             </Row>
                                         </Row>
                                         <Row>
-                                            <Weights changeWeights={this.changeWeights} weights={this.state.weights}/>
+                                            <Weights changeWeights={this.props.changeWeights} weights={this.props.global.weights}/>
                                         </Row>
                                     </Container>
                                 </Col>
@@ -159,7 +121,7 @@ class AnalyzeData extends Component {
                                 <Col className='m-0 p-0'>
                                     <Row className='m-0 p-0'>
                                         <DataChart type={'output'} className='m-0 p-0'
-                                                   data={[this.state.desiredEnergy, this.state.outputEnergy]}
+                                                   data={[this.props.global.eDes, this.props.global.eOut]}
                                                    settings={this.props.global.settings.settings}/>
 
                                     </Row>
@@ -179,29 +141,29 @@ class AnalyzeData extends Component {
                                     </Row>
                                     <Row className='my-2 mx-0 p-0 px-3'>
                                         <Col className='col-3 m-0 p-0 py-1 text-center dark' style={{border: '1px solid black'}}>
-                                            <p className={'text-white m-0 p-0'} style={{fontSize: '16px'}}>{this.state.currentConfiguration[0].mat}</p>
+                                            <p className={'text-white m-0 p-0'} style={{fontSize: '16px'}}>{this.props.global.curMats[0].mat}</p>
                                         </Col>
                                         <Col className='col-3 m-0 p-0 py-1 text-center dark' style={{border: '1px solid black'}}>
-                                            <p className={'text-white m-0 p-0'} style={{fontSize: '16px'}}>{this.state.currentConfiguration[1].mat}</p>
+                                            <p className={'text-white m-0 p-0'} style={{fontSize: '16px'}}>{this.props.global.curMats[1].mat}</p>
                                         </Col>
                                         <Col className='col-3 m-0 p-0 py-1 text-center dark' style={{border: '1px solid black'}}>
-                                            <p className={'text-white m-0 p-0'} style={{fontSize: '16px'}}>{this.state.currentConfiguration[2].mat}</p>
+                                            <p className={'text-white m-0 p-0'} style={{fontSize: '16px'}}>{this.props.global.curMats[2].mat}</p>
                                         </Col>
                                         <Col className='col-3 m-0 p-0 py-1 text-center dark' style={{border: '1px solid black'}}>
-                                            <p className={'text-white m-0 p-0'} style={{fontSize: '16px'}}>{this.state.currentConfiguration[3].mat}</p>
+                                            <p className={'text-white m-0 p-0'} style={{fontSize: '16px'}}>{this.props.global.curMats[3].mat}</p>
                                         </Col>
                                     </Row>
                                     <Row className='px-3 pb-0 pt-auto mx-0 mb-0 mt-auto'>
-                                        <Weights changeWeights={this.changeWeights} weights={this.state.weights}/>
+                                        <Weights changeWeights={this.props.changeWeights} weights={this.props.global.weights}/>
                                     </Row>
                                 </Col>
                                 <div className='mr-0 ml-auto p-0'>
                                     <Container>
                                         <Row className='mb-2'>
-                                            <SystemPreview configuration={this.state.currentConfiguration} matlist={this.state.currentConfiguration} />
+                                            <SystemPreview configuration={this.props.global.curMats} matlist={this.props.global.curMats} />
                                         </Row>
                                         <Row>
-                                            <AnalysisConsole log={this.state.log} progress={this.state.progress}/>
+                                            <AnalysisConsole log={this.props.global.analysisConsole} progress={this.props.global.analyzerProgress}/>
                                         </Row>
                                     </Container>
                                 </div>

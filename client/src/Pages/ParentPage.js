@@ -27,7 +27,29 @@ class ParentPage extends Component {
             genListMulti: [],
             configs: [],
             defaultMat: {name: 'Galactic', installed: true, color: '#000000'},
-            socket: io('http://10.103.72.187:5001'),
+            genSocket: io('http://10.103.72.187:5001'),
+            analyzerSocket: io('http://10.103.72.187:5002'),
+            analysisData: {
+                eIn: [],
+                eDes: [],
+                eOut: [],
+                weights: {accuracy: 1, weight: 0, size: 0, cost: 0},
+                curMats: [{mat: 'tin', color: 'blue1', length: 10},
+                    {mat: 'moly', color: 'blue3', length: 10},
+                    {mat: 'bh303', color: 'blue5', length: 10},
+                    {mat: 'graphite', color: 'blue7', length: 10},],
+                curDiff: Infinity,
+                matDict: {},
+                matsAvail: [],
+                matsAvailNames: [],
+                iteration: 0,
+                algorithm: '',
+                weightsChanged: false,
+                running: true,
+            },
+            analysisConsole: '',
+            analyzerProgress: 0,
+            currentAnalyzer: 0,
         };
         this.changeSettings = this.changeSettings.bind(this);
         this.initSettings = this.initSettings.bind(this);
@@ -40,8 +62,33 @@ class ParentPage extends Component {
         this.genListRemove = this.genListRemove.bind(this);
         this.closeGenConsole = this.closeGenConsole.bind(this);
         this.uploadConfig = this.uploadConfig.bind(this);
+        this.updateInput = this.updateInput.bind(this);
+        this.changeWeights = this.changeWeights.bind(this);
 
     }
+
+    updateInput(e, target) {
+        let tempArr;
+        switch (target) {
+            case 'eIn':
+                tempArr = this.state.eIn.slice();
+                tempArr[Number(e.target.id)] = Number(e.target.value);
+                this.setState({eIn: tempArr});
+                break;
+            case 'eDes':
+                tempArr = this.state.eDes.slice();
+                tempArr[Number(e.target.id)] = Number(e.target.value);
+                this.setState({eDes: tempArr});
+                break;
+            default:
+                break;
+        }
+    }
+
+    changeWeights(e, weights) {
+        this.setState({analysisData: {weights}});
+    }
+
 
     closeGenConsole() {
         this.setState({genConsoleOpen: false});
@@ -105,7 +152,9 @@ class ParentPage extends Component {
                 let newConfig = {
                     mode: 'single',
                     matList: [matConfig.mat, ...[...Array(this.state.numGeantSpots - 1).keys()].map(i => this.state.defaultMat)],
-                    lenList: [matConfig.len, ...[...Array(this.state.numGeantSpots - 1).keys()].map(i => {return {single: true, min: 10, max: 100, part: 30}})],
+                    lenList: [matConfig.len, ...[...Array(this.state.numGeantSpots - 1).keys()].map(i => {
+                        return {single: true, min: 10, max: 100, part: 30}
+                    })],
                 };
                 return this.uploadConfig(newConfig)
                     .then(id => {
@@ -120,13 +169,17 @@ class ParentPage extends Component {
             ];
 
             Promise.all(promises).then((configIDsToRun) =>
-                this.state.socket.emit('runConfigs',configIDsToRun)
+                this.state.genSocket.emit('runConfigs', configIDsToRun)
             );
         }
     };
 
     runAnalysis() {
-
+        axios.post('http://10.103.72.187:5000/api/v1/analyzer', this.state.analysisData).then(res => {
+            const id = res._id;
+            this.setState({currentAnalyzer: id});
+            this.state.analyzerSocket.emit('runAnalyzer', id);
+        });
     };
 
     changeSettings(settings) {
@@ -155,7 +208,7 @@ class ParentPage extends Component {
 
     changeButtonState(runButtonActivated) {
         this.setState({runButtonActivated});
-        this.generateData();
+        this.state.runButtonPhrase === 'Generate Data' ? this.generateData() : this.runAnalysis();
     };
 
     initSettings() {
@@ -180,7 +233,18 @@ class ParentPage extends Component {
     componentDidMount() {
         console.log('app mount');
         this.initSettings();
-        this.state.socket.on('runConfigsClient', data => {this.setState({genConsole: this.state.genConsole + data + '\n'})})
+        this.state.genSocket.on('runConfigsClient', data => {
+            this.setState({genConsole: this.state.genConsole + data + '\n'})
+        });
+        this.state.analyzerSocket.on('runAnalyzerStdout', data => {
+            this.setState({analysisConsole: this.state.analysisConsole + data + '\n'})
+        });
+        this.state.analyzerSocket.on('runAnalyzerStderr', data => {
+            this.setState({analysisConsole: this.state.analysisConsole + data + '\n'})
+        });
+        this.state.analyzerSocket.on('runAnalyzerData', data => {
+            this.setState({analysisData: {eOut: data}})
+        });
     };
 
     printProps() {
@@ -212,7 +276,9 @@ class ParentPage extends Component {
                            render={props => <AnalyzeData  {...props}
                                                           global={this.state}
                                                           changeSettings={this.changeSettings}
-                                                          changeButtonState={this.changeButtonState}/>}/>
+                                                          changeButtonState={this.changeButtonState}
+                                                          updateInput={this.updateInput}
+                                                          changeWeights={this.changeWeights}/>}/>
                 </Container>
             </Router>
         );

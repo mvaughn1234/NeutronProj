@@ -15,7 +15,8 @@ const http = require('http');
 require('events').EventEmitter.prototype._maxListeners = 100;
 
 // SocketIO Port
-const socketIoPort = 5001;
+const genIoPort = 5001;
+const analyzeIoPort = 5002;
 
 // Routes to api
 const indexRouter = require('./routes/index');
@@ -25,11 +26,13 @@ const propsRouter = require('./routes/api/v1/setting');
 const configRouter = require('./routes/api/v1/config');
 const matRouter = require('./routes/api/v1/mat');
 const energySetRouter = require('./routes/api/v1/energySet');
+const analyzerRouter = require('./routes/api/v1/analyzer');
 
 const app = express();
 
 // Controllers that use socket.io
 const configController = require('./controllers/configController');
+const analyzerController = require('./controllers/analyzerController');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -44,11 +47,11 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser());
 
-// Socket.io
-const server = http.Server(app);
-const io = socketio(server);
-server.listen(socketIoPort);
-io.on('connection', (socket) => {
+// Socket.io Generate Data
+const generator = http.Server(app);
+const genIo = socketio(generator);
+generator.listen(genIoPort);
+genIo.on('connection', (socket) => {
   console.log('connected to socket ', socket.id);
   socket.on('runConfigs', (Configs) => {
     console.log('socketData: ', JSON.stringify(Configs));
@@ -56,6 +59,20 @@ io.on('connection', (socket) => {
     configController.runConfigs(socket,Configs);
   });
 });
+
+// Socket.io Generate Data
+const analyzer = http.Server(app);
+const anIo = socketio(analyzer);
+analyzer.listen(analyzeIoPort);
+anIo.on('connection', (socket) => {
+  console.log('connected to socket ', socket.id);
+  socket.on('runAnalyzer', (analysisData) => {
+    console.log('socketData: ', JSON.stringify(analysisData));
+    socket.emit('runAnalyzer','running analysis');
+    analyzerController.startAnalyzer(socket,analysisData);
+  });
+});
+
 
 
 // Link Routes
@@ -66,6 +83,7 @@ app.use('/api/v1/matDB', matDBRouter);
 app.use('/api/v1/config', configRouter);
 app.use('/api/v1/energySet', energySetRouter);
 app.use('/api/v1/mat', matRouter);
+app.use('/api/v1/analyzer', analyzerRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
