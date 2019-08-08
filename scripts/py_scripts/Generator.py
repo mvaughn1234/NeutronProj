@@ -74,7 +74,7 @@ class Generator:
             for line in asciiFile:
                 matches = re.findall('(\-?\d+\.\d+e[\-\+]\d+)', line)
                 if matches:
-                    currentRunData['eOut'].append({10**float(matches[0]): float(matches[1])})
+                    currentRunData['eOut'].append({'bin': 10**float(matches[0]), 'value': float(matches[1])})
                     i += 1
 
         print('data: ', currentRunData)
