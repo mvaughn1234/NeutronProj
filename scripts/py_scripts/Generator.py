@@ -79,7 +79,7 @@ class Generator:
 
         print('data: ', currentRunData)
 
-        url = self.url + 'api/v1/matDB/' + self.mats[0] + '/' + str(self.lengths[0]) + '/add'
+        url = self.url + 'api/v1/matDB/' + self.mats[0] + '/' + str(self.lengths[0]) + '/' + str(self.energy) + '/add'
         mat = requests.put(url, currentRunData)
         print('-'*30+'\n'+'data: \n\t', str(currentRunData)+'\n'+'='*30)
         print('-'*30+'\n'+'response: \n\t', str(mat)+'\n'+'='*30)
