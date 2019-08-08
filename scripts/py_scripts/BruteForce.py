@@ -11,10 +11,12 @@ class BruteForce:
     def generateListOfCombinations(self):
         lock = self.lock
         lock.acquire(True)
-        matNames = self.analysisData.matNames
-        mats = self.analysisData.mats
-        matDict = self.analysisData.matDict
+        matNames = self.analysisData.get('matsAvailNames')
+        mats = self.analysisData.get('matsAvail')
+        matDict = self.analysisData.get('matDict')
         lock.release()
+        a = 0
+        return []
 
 
 
@@ -22,8 +24,8 @@ class BruteForce:
     def processData(self, matCombinationIndices, listOfMatCombinations):
         lock = self.lock
         lock.acquire(True)
-        eIn = np.ndarray(self.analysisData.eIn)
-        eDes = np.ndarray(self.analysisData.eDes)
+        eIn = np.ndarray(self.analysisData.get('eIn'))
+        eDes = np.ndarray(self.analysisData.get('eDes'))
         lock.release()
         for matCombinationIdx in matCombinationIndices:
             eOut = np.multiply(listOfMatCombinations[matCombinationIdx].data,eIn)
@@ -31,11 +33,11 @@ class BruteForce:
             diffNorm = np.norm(diff)
             curMats = listOfMatCombinations[matCombinationIdx]
             lock.acquire(True)
-            if diffNorm < self.analysisData.curDiff:
-                self.analysisData.eOut = eOut
-                self.analysisData.curDiff = diffNorm
-                self.analysisData.curMats = curMats
-            if not self.analysisData.running:
+            if diffNorm < self.analysisData.get('curDiff'):
+                self.analysisData.set('eOut', eOut)
+                self.analysisData.set('curDiff', diffNorm)
+                self.analysisData.set('curMats', curMats)
+            if not self.analysisData.get('running'):
                 lock.release()
                 return -1
             lock.release()

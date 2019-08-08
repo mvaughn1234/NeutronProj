@@ -18,19 +18,23 @@ class AnalysisData:
             }
         else:
             self.data = {
-                'eIn': seedData.eIn,
-                'eDes': seedData.eDes,
-                'eOut': seedData.eOut,
-                'weights': seedData.weights,
-                'curMats': seedData.curMats,
-                'matDict': seedData.matDict,
-                'matsAvail': seedData.matsAvail,
-                'matsAvailNames': seedData.matsAvailNames,
-                'iteration': seedData.iteration,
-                'algorithm': seedData.algorithm,
-                'weightsChanged': seedData.weightsChanged,
-                'analyzerID': seedData.analyzerID,
-                'running': seedData.running,
+                'eIn': seedData['eIn'],
+                'eDes': seedData['eDes'],
+                'eOut': seedData['eOut'],
+                'weights': seedData['weights'],
+                'curMats': seedData['curMats'],
+                'matDict': seedData['matDict'],
+                'matsAvail': seedData['matsAvail'],
+                'matsAvailNames': seedData['matsAvailNames'],
+                'iteration': seedData['iteration'],
+                'algorithm': seedData['algorithm'],
+                'weightsChanged': seedData['weightsChanged'],
+                'analyzerID': seedData['analyzerID'],
+                'running': seedData['running'],
             }
 
+    def get(self, item):
+        return self.data[item]
 
+    def set(self, key, value):
+        self.data[key] = value

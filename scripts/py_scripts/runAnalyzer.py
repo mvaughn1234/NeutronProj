@@ -2,8 +2,9 @@ import sys
 import requests
 import time
 from multiprocessing import Process, Lock, Semaphore
-import BruteForce
-import AnalysisData
+from functools import reduce
+from BruteForce import BruteForce
+from AnalysisData import AnalysisData
 
 
 # run an algorithm based on analysisData
@@ -12,11 +13,11 @@ import AnalysisData
 # release lock
 def analyzer(analysisData, lock):
     switch = {
-        'bruteForce': BruteForce,
+        'BruteForce': BruteForce,
     }
-    analyzer = switch.get(analysisData.algorithm)(analysisData, lock)
-    Process(target=analyzer.run, args=(analysisData, sharedLock,)).start()
-
+    analyzerawer = switch.get(analysisData.get('algorithm'))(analysisData, lock)
+    # Process(target=analyzer.run).start()
+    analyzerawer.run()
 
 # get analysis, check if weights changed
 # lock data
@@ -24,34 +25,37 @@ def analyzer(analysisData, lock):
 # release lock
 def updater(analysisData, interval, lock):
     time.sleep(interval / 1000)
-    serverData = requests.get(("http://localhost:5002/api/v1/analyzer/{id}".format(id=analysisData._id))).json()
+    serverData = requests.get(("http://10.103.72.187:5002/api/v1/analyzer/{id}".format(id=analysisData.get('_id')))).json()
     lock.acquire(True)
-    analysisData.running = serverData.running
-    analysisData.weightsChanged = analysisData.weights - serverData.weights
-    analysisData.weights = serverData.weights
-    requests.put(("http://localhost:5002/api/v1/analyzer/{id}/update".format(id=analysisData._id)), analysisData)
+    analysisData.set('running', serverData['running'])
+    analysisData.set('weightsChanged', analysisData.get('weights') - serverData['weights'])
+    analysisData.set('weights', serverData['weights'])
+    requests.put(("http://10.103.72.187:5002/api/v1/analyzer/{id}/update".format(id=analysisData.get('_id'))), analysisData)
     lock.release()
 
 
 if __name__ == '__main__':
     if sys.argv and sys.argv[1]:
         analyzerID = sys.argv[1]
-        analysisSeed = requests.get(("http://localhost:5002/api/v1/analyzer/{id}".format(id=analyzerID))).json()
-        mats = requests.get("http://localhost:5000/api/v1/mats").json()
-        matData = requests.get("http://localhost:5000/api/v1/matDB").json()
+        analysisSeed = requests.get(("http://10.103.72.187:5002/api/v1/analyzer/{id}".format(id=analyzerID))).json()
+        mats = requests.get("http://10.103.72.187:5000/api/v1/mat").json()
+        matData = requests.get("http://10.103.72.187:5000/api/v1/matDB").json()
         while not (analysisSeed and mats and matData):
             pass
+        matDict = {}
+        for matDB in matData:
+            matDict[matDB['mat']['name']] = matDB['data']
         temp = {
-            'eIn': analysisSeed.eIn,
-            'eDes': analysisSeed.eDes,
-            'eOut': analysisSeed.eOut,
-            'weights': analysisSeed.weights,
+            'eIn': analysisSeed['eIn'],
+            'eDes': analysisSeed['eDes'],
+            'eOut': analysisSeed['eOut'],
+            'weights': analysisSeed['weights'],
             'curMats': [],
-            'matDict': map(lambda matDB: {matDB.name: matDB.data}, matData),
+            'matDict': matDict,
             'matsAvail': mats,
-            'matsAvailNames': map(lambda mat: mat.name, mats),
+            'matsAvailNames': list(map(lambda mat: mat['name'], mats)),
             'iteration': 0,
-            'algorithm': analysisSeed.algorithm,
+            'algorithm': analysisSeed['algorithm'],
             'weightsChanged': False,
             'analyzerID': analyzerID,
             'running': True,
@@ -60,4 +64,5 @@ if __name__ == '__main__':
 
         sharedLock = Lock()
         interval = 250  # ms
+        analyzer(analysisData,sharedLock)
         # Process(target=updater, args=(analysisData, interval, sharedLock,)).start()

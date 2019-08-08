@@ -13,33 +13,48 @@ exports.getMatDB = (req, res) => {
 };
 
 exports.addDataSet = (req, res) => {
-    MatDB.find({'mat.name': req.params.name, 'data.len': req.params.length})
-        .then(matDB => {
-            console.log('matDB', matDB);
-            if (matDB.length === 0) {
-                MatDB.find({'mat.name': req.params.name})
-                    .then(matDB2 => {
-                        if (matDB2.length === 0) {
-                            Mat.find({"name": req.params.name})
-                                .then(mat => {
-                                    if (mat.length === 0) {
-                                        res.status(500).send("Couldn't find material")
+    MatDB.find({'mat.name': req.params.name, 'data.len': req.params.length, 'data.lenSet.eIn': req.params.eIn})
+        .then(matDB1 => {
+            if (matDB1.length === 0) {
+                MatDB.find({'mat.name': req.params.name, 'data.len': req.params.length})
+                    .then(matDB => {
+                        console.log('matDB', matDB);
+                        if (matDB.length === 0) {
+                            MatDB.find({'mat.name': req.params.name})
+                                .then(matDB2 => {
+                                    if (matDB2.length === 0) {
+                                        Mat.find({"name": req.params.name})
+                                            .then(mat => {
+                                                if (mat.length === 0) {
+                                                    res.status(500).send("Couldn't find material")
+                                                } else {
+                                                    const lenSet = {len: req.params.length, lenSet: [req.body]};
+                                                    const newDB = {mat: mat[0], data: [lenSet]};
+                                                    const newMatDB = new MatDB(newDB);
+                                                    newMatDB.save();
+                                                    const msg = 'Adding new mat database: ' + req.params.name;
+                                                    console.log(msg);
+                                                    res.status(201).send(msg)
+                                                }
+                                            })
                                     } else {
                                         const lenSet = {len: req.params.length, lenSet: [req.body]};
-                                        const newDB = {mat: mat[0], data: [lenSet]};
-                                        const newMatDB = new MatDB(newDB);
-                                        newMatDB.save();
-                                        const msg = 'Adding new mat database: ' + req.params.name;
-                                        console.log(msg);
-                                        res.status(201).send(msg)
+                                        MatDB.update({'mat.name': req.params.name},
+                                            {$push: {'data': lenSet}})
+                                            .then(matDB => {
+                                                const msg = 'Adding new len set to ' + req.params.name + ' database';
+                                                console.log(msg);
+                                                res.status(200).send(msg)
+                                            })
+                                            .catch(err => res.status(500).send(err))
                                     }
                                 })
-                        }else{
-                            const lenSet = {len: req.params.length, lenSet: [req.body]};
-                            MatDB.update({'mat.name': req.params.name},
-                                {$push: {'data': lenSet}})
+                        } else {
+                            console.log('here');
+                            MatDB.update({'mat.name': req.params.name, 'data.len': req.params.length},
+                                {$push: {'data.$.lenSet': req.body}})
                                 .then(matDB => {
-                                    const msg = 'Adding new len set to ' + req.params.name + ' database';
+                                    const msg = 'Adding new data set to ' + req.params.name + ' lenSet at length ' + req.params.length;
                                     console.log(msg);
                                     res.status(200).send(msg)
                                 })
@@ -47,17 +62,18 @@ exports.addDataSet = (req, res) => {
                         }
                     })
             } else {
-                console.log('here');
-                MatDB.update({'mat.name': req.params.name, 'data.len': req.params.length},
-                    {$push: {'data.$.lenSet': req.body}})
+                MatDB.update({'mat.name': req.params.name, 'data.len': req.params.length, 'data.lenSet.eIn': req.params.eIn},
+                    {$set: {'data.lenSet.$.eOut': req.body.eOut}})
                     .then(matDB => {
                         const msg = 'Adding new data set to ' + req.params.name + ' lenSet at length ' + req.params.length;
                         console.log(msg);
                         res.status(200).send(msg)
                     })
                     .catch(err => res.status(500).send(err))
+
             }
         })
+
 };
 
 exports.deleteMatDB = (req, res) => {

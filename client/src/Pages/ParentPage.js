@@ -43,7 +43,7 @@ class ParentPage extends Component {
                 matsAvail: [],
                 matsAvailNames: [],
                 iteration: 0,
-                algorithm: '',
+                algorithm: 'BruteForce',
                 weightsChanged: false,
                 running: true,
             },
