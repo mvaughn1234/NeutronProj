@@ -66,13 +66,13 @@ class AnalyzeData extends Component {
                                         <Row className='m-0 p-0'>
                                             {this.state.viewInner === 0 ?
                                                 <Form className='overflow-auto' style={{height: '300px'}}>
-                                                    <DataChart type={'In'} data={this.props.global.eIn}
+                                                    <DataChart type={'eIn'} data={this.props.global.analysisData.eIn}
                                                                updateInput={this.props.updateInput}
                                                                settings={this.props.global.settings.settings}/>
                                                 </Form>
                                                 :
                                                 <Form className='overflow-auto' style={{height: '300px'}}>
-                                                    <DataChart type={'desOut'} data={this.props.global.eDes}
+                                                    <DataChart type={'eDes'} data={this.props.global.analysisData.eDes}
                                                                updateInput={this.props.updateInput}
                                                                settings={this.props.global.settings.settings}/>
                                                 </Form>
@@ -111,7 +111,7 @@ class AnalyzeData extends Component {
                                             </Row>
                                         </Row>
                                         <Row>
-                                            <Weights changeWeights={this.props.changeWeights} weights={this.props.global.weights}/>
+                                            <Weights changeWeights={this.props.changeWeights} weights={this.props.global.analysisData.weights}/>
                                         </Row>
                                     </Container>
                                 </Col>
@@ -121,7 +121,7 @@ class AnalyzeData extends Component {
                                 <Col className='m-0 p-0'>
                                     <Row className='m-0 p-0'>
                                         <DataChart type={'output'} className='m-0 p-0'
-                                                   data={[this.props.global.eDes, this.props.global.eOut]}
+                                                   data={[this.props.global.analysisData.eDes, this.props.global.analysisData.eOut]}
                                                    settings={this.props.global.settings.settings}/>
 
                                     </Row>
@@ -141,26 +141,26 @@ class AnalyzeData extends Component {
                                     </Row>
                                     <Row className='my-2 mx-0 p-0 px-3'>
                                         <Col className='col-3 m-0 p-0 py-1 text-center dark' style={{border: '1px solid black'}}>
-                                            <p className={'text-white m-0 p-0'} style={{fontSize: '16px'}}>{this.props.global.curMats[0].mat}</p>
+                                            <p className={'text-white m-0 p-0'} style={{fontSize: '16px'}}>{this.props.global.analysisData.curMats[0].mat}</p>
                                         </Col>
                                         <Col className='col-3 m-0 p-0 py-1 text-center dark' style={{border: '1px solid black'}}>
-                                            <p className={'text-white m-0 p-0'} style={{fontSize: '16px'}}>{this.props.global.curMats[1].mat}</p>
+                                            <p className={'text-white m-0 p-0'} style={{fontSize: '16px'}}>{this.props.global.analysisData.curMats[1].mat}</p>
                                         </Col>
                                         <Col className='col-3 m-0 p-0 py-1 text-center dark' style={{border: '1px solid black'}}>
-                                            <p className={'text-white m-0 p-0'} style={{fontSize: '16px'}}>{this.props.global.curMats[2].mat}</p>
+                                            <p className={'text-white m-0 p-0'} style={{fontSize: '16px'}}>{this.props.global.analysisData.curMats[2].mat}</p>
                                         </Col>
                                         <Col className='col-3 m-0 p-0 py-1 text-center dark' style={{border: '1px solid black'}}>
-                                            <p className={'text-white m-0 p-0'} style={{fontSize: '16px'}}>{this.props.global.curMats[3].mat}</p>
+                                            <p className={'text-white m-0 p-0'} style={{fontSize: '16px'}}>{this.props.global.analysisData.curMats[3].mat}</p>
                                         </Col>
                                     </Row>
                                     <Row className='px-3 pb-0 pt-auto mx-0 mb-0 mt-auto'>
-                                        <Weights changeWeights={this.props.changeWeights} weights={this.props.global.weights}/>
+                                        <Weights changeWeights={this.props.changeWeights} weights={this.props.global.analysisData.weights}/>
                                     </Row>
                                 </Col>
                                 <div className='mr-0 ml-auto p-0'>
                                     <Container>
                                         <Row className='mb-2'>
-                                            <SystemPreview configuration={this.props.global.curMats} matlist={this.props.global.curMats} />
+                                            <SystemPreview configuration={this.props.global.analysisData.curMats} matlist={this.props.global.analysisData.curMats} />
                                         </Row>
                                         <Row>
                                             <AnalysisConsole log={this.props.global.analysisConsole} progress={this.props.global.analyzerProgress}/>

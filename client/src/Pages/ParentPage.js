@@ -71,14 +71,14 @@ class ParentPage extends Component {
         let tempArr;
         switch (target) {
             case 'eIn':
-                tempArr = this.state.eIn.slice();
+                tempArr = this.state.analysisData.eIn.slice();
                 tempArr[Number(e.target.id)] = Number(e.target.value);
-                this.setState({eIn: tempArr});
+                this.setState(state => (state.analysisData.eIn = tempArr, state));
                 break;
             case 'eDes':
-                tempArr = this.state.eDes.slice();
+                tempArr = this.state.analysisData.eDes.slice();
                 tempArr[Number(e.target.id)] = Number(e.target.value);
-                this.setState({eDes: tempArr});
+                this.setState(state => (state.analysisData.eDes = tempArr, state));
                 break;
             default:
                 break;
@@ -86,7 +86,7 @@ class ParentPage extends Component {
     }
 
     changeWeights(e, weights) {
-        this.setState({analysisData: {weights}});
+        this.setState(state => (state.analysisData.weights = weights, state));
     }
 
 
@@ -175,7 +175,7 @@ class ParentPage extends Component {
     };
 
     runAnalysis() {
-        axios.post('http://10.103.72.187:5000/api/v1/analyzer', this.state.analysisData).then(res => {
+        axios.post('http://10.103.72.187:5000/api/v1/analyzer/new', this.state.analysisData).then(res => {
             const id = res._id;
             this.setState({currentAnalyzer: id});
             this.state.analyzerSocket.emit('runAnalyzer', id);
@@ -243,7 +243,7 @@ class ParentPage extends Component {
             this.setState({analysisConsole: this.state.analysisConsole + data + '\n'})
         });
         this.state.analyzerSocket.on('runAnalyzerData', data => {
-            this.setState({analysisData: {eOut: data}})
+            this.setState(state => (state.analysisData.eOut = data, state));
         });
     };
 
