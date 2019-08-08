@@ -176,7 +176,7 @@ class ParentPage extends Component {
 
     runAnalysis() {
         axios.post('http://10.103.72.187:5000/api/v1/analyzer/new', this.state.analysisData).then(res => {
-            const id = res._id;
+            const id = res.data._id;
             this.setState({currentAnalyzer: id});
             this.state.analyzerSocket.emit('runAnalyzer', id);
         });

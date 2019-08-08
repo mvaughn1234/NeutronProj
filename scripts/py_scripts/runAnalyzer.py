@@ -24,21 +24,21 @@ def analyzer(analysisData, lock):
 # release lock
 def updater(analysisData, interval, lock):
     time.sleep(interval / 1000)
-    serverData = requests.get(("localhost:5002/api/v1/{id}".format(id=analysisData._id))).json()
+    serverData = requests.get(("http://localhost:5002/api/v1/analyzer/{id}".format(id=analysisData._id))).json()
     lock.acquire(True)
     analysisData.running = serverData.running
     analysisData.weightsChanged = analysisData.weights - serverData.weights
     analysisData.weights = serverData.weights
-    requests.put(("localhost:5002/api/v1/{id}/update".format(id=analysisData._id)), analysisData)
+    requests.put(("http://localhost:5002/api/v1/analyzer/{id}/update".format(id=analysisData._id)), analysisData)
     lock.release()
 
 
 if __name__ == '__main__':
     if sys.argv and sys.argv[1]:
         analyzerID = sys.argv[1]
-        analysisSeed = requests.get(("localhost:5002/api/v1/{id}".format(id=analyzerID))).json()
-        mats = requests.get("localhost:5000/api/v1/mats").json()
-        matData = requests.get("localhost:5000/api/v1/matDB").json()
+        analysisSeed = requests.get(("http://localhost:5002/api/v1/analyzer/{id}".format(id=analyzerID))).json()
+        mats = requests.get("http://localhost:5000/api/v1/mats").json()
+        matData = requests.get("http://localhost:5000/api/v1/matDB").json()
         while not (analysisSeed and mats and matData):
             pass
         temp = {
