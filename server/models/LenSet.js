@@ -6,10 +6,7 @@ const LenSchema = new Schema({
         type: Number,
         required: true
     },
-    eOut: [{
-        bin: Number,
-        value: Number
-    }]
+    eOut: [{}]
 });
 
 const LenSetSchema = new Schema({
