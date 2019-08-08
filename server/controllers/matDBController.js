@@ -63,7 +63,7 @@ exports.addDataSet = (req, res) => {
                     })
             } else {
                 MatDB.update({'mat.name': req.params.name, 'data.len': req.params.length, 'data.lenSet.eIn': req.params.eIn},
-                    {$set: {'data.lenSet.$.eOut': req.body.eOut}})
+                    {$set: {'data.lenSet.eOut': req.body.eOut}})
                     .then(matDB => {
                         const msg = 'Adding new data set to ' + req.params.name + ' lenSet at length ' + req.params.length;
                         console.log(msg);
