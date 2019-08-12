@@ -34,7 +34,7 @@ class BruteForce:
                     enSet = matDict[mat][length][eIn]
                     arr = np.array([float(value) for (key, value) in sorted(matDict[mat][length][eIn].items())])
                     arr2 = np.hstack(
-                        [np.flip(np.array(sorted(matDict[mat][length][eIn].items())), 1), np.ones((len(arr), 1)) * length,
+                        [np.fliplr(np.array(sorted(matDict[mat][length][eIn].items()))), np.ones((len(arr), 1)) * length,
                          np.array(mat).repeat(30).reshape(30, 1)])
                     arr2[:,0] = np.ndarray.astype(np.ndarray.astype(arr2[:,0],dtype=float)/np.sum(np.ndarray.astype(arr2[:,0],dtype=float)),dtype=arr2.dtype)
                     tempSub.append(arr)
