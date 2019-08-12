@@ -1,4 +1,6 @@
-class AnalysisData:
+import json
+
+class AnalysisData(object):
     def __init__(self, seedData=None):
         if seedData is None:
             self.data = {
@@ -22,6 +24,7 @@ class AnalysisData:
                 'eDes': seedData['eDes'],
                 'eOut': seedData['eOut'],
                 'weights': seedData['weights'],
+                'curDiff': float('inf'),
                 'curMats': seedData['curMats'],
                 'matDict': seedData['matDict'],
                 'matsAvail': seedData['matsAvail'],
@@ -38,3 +41,6 @@ class AnalysisData:
 
     def set(self, key, value):
         self.data[key] = value
+
+    def getData(self):
+        return self.data
