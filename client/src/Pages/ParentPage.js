@@ -34,10 +34,7 @@ class ParentPage extends Component {
                 eDes: [],
                 eOut: [],
                 weights: {accuracy: 1, weight: 0, size: 0, cost: 0},
-                curMats: [{mat: 'tin', color: 'blue1', length: 10},
-                    {mat: 'moly', color: 'blue3', length: 10},
-                    {mat: 'bh303', color: 'blue5', length: 10},
-                    {mat: 'graphite', color: 'blue7', length: 10},],
+                curMats: [],
                 curDiff: Infinity,
                 matDict: {},
                 matsAvail: [],
@@ -46,6 +43,7 @@ class ParentPage extends Component {
                 algorithm: 'BruteForce',
                 weightsChanged: false,
                 running: true,
+                analyzerID: '',
             },
             analysisConsole: '',
             analyzerProgress: 0,
@@ -175,10 +173,20 @@ class ParentPage extends Component {
     };
 
     runAnalysis() {
+        let id;
         axios.post('http://10.103.72.187:5000/api/v1/analyzer/new', this.state.analysisData).then(res => {
-            const id = res.data._id;
+            id = res.data._id;
             this.setState({currentAnalyzer: id});
             this.state.analyzerSocket.emit('runAnalyzer', id);
+        }).then(data => {
+            while (this.state.analysisData.running){
+                axios.get(`http://10.103.72.187:5002/api/v1/analyzer/${id}`)
+                    .then(res => {
+                        let analysisData = res.data;
+                        console.log('data', analysisData);
+                        this.setState({analysisData})
+                    })
+            }
         });
     };
 
@@ -245,6 +253,9 @@ class ParentPage extends Component {
         this.state.analyzerSocket.on('runAnalyzerData', data => {
             this.setState(state => (state.analysisData.eOut = data, state));
         });
+        this.setState(state => (state.analysisData.eIn = this.state.settings && (this.state.settings).len > 0 ? Array(this.state.settings.numBins).fill(0) : Array(30).fill(0), state));
+        this.setState(state => (state.analysisData.eDes = this.state.settings && (this.state.settings).len > 0 ? Array(this.state.settings.numBins).fill(0) : Array(30).fill(0), state));
+        this.setState(state => (state.analysisData.eOut = this.state.settings && (this.state.settings).len > 0 ? Array(this.state.settings.numBins).fill(0) : Array(30).fill(0), state));
     };
 
     printProps() {

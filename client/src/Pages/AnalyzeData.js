@@ -111,7 +111,8 @@ class AnalyzeData extends Component {
                                             </Row>
                                         </Row>
                                         <Row>
-                                            <Weights changeWeights={this.props.changeWeights} weights={this.props.global.analysisData.weights}/>
+                                            <Weights changeWeights={this.props.changeWeights}
+                                                     weights={this.props.global.analysisData.weights}/>
                                         </Row>
                                     </Container>
                                 </Col>
@@ -140,30 +141,27 @@ class AnalyzeData extends Component {
                                         </Col>
                                     </Row>
                                     <Row className='my-2 mx-0 p-0 px-3'>
-                                        <Col className='col-3 m-0 p-0 py-1 text-center dark' style={{border: '1px solid black'}}>
-                                            <p className={'text-white m-0 p-0'} style={{fontSize: '16px'}}>{this.props.global.analysisData.curMats[0].mat}</p>
-                                        </Col>
-                                        <Col className='col-3 m-0 p-0 py-1 text-center dark' style={{border: '1px solid black'}}>
-                                            <p className={'text-white m-0 p-0'} style={{fontSize: '16px'}}>{this.props.global.analysisData.curMats[1].mat}</p>
-                                        </Col>
-                                        <Col className='col-3 m-0 p-0 py-1 text-center dark' style={{border: '1px solid black'}}>
-                                            <p className={'text-white m-0 p-0'} style={{fontSize: '16px'}}>{this.props.global.analysisData.curMats[2].mat}</p>
-                                        </Col>
-                                        <Col className='col-3 m-0 p-0 py-1 text-center dark' style={{border: '1px solid black'}}>
-                                            <p className={'text-white m-0 p-0'} style={{fontSize: '16px'}}>{this.props.global.analysisData.curMats[3].mat}</p>
-                                        </Col>
+                                        {this.props.global.analysisData.curMats.map(mat =>
+                                            <Col className='col-3 m-0 p-0 py-1 text-center dark'
+                                                 style={{border: '1px solid black'}}>
+                                                <p className={'text-white m-0 p-0'} style={{fontSize: '16px'}}>{mat}</p>
+                                            </Col>
+                                        )}
                                     </Row>
                                     <Row className='px-3 pb-0 pt-auto mx-0 mb-0 mt-auto'>
-                                        <Weights changeWeights={this.props.changeWeights} weights={this.props.global.analysisData.weights}/>
+                                        <Weights changeWeights={this.props.changeWeights}
+                                                 weights={this.props.global.analysisData.weights}/>
                                     </Row>
                                 </Col>
                                 <div className='mr-0 ml-auto p-0'>
                                     <Container>
                                         <Row className='mb-2'>
-                                            <SystemPreview configuration={this.props.global.analysisData.curMats} matlist={this.props.global.analysisData.curMats} />
+                                            <SystemPreview configuration={this.props.global.analysisData.curMats}
+                                                           matlist={this.props.global.analysisData.curMats}/>
                                         </Row>
                                         <Row>
-                                            <AnalysisConsole log={this.props.global.analysisConsole} progress={this.props.global.analyzerProgress}/>
+                                            <AnalysisConsole log={this.props.global.analysisConsole}
+                                                             progress={this.props.global.analyzerProgress}/>
                                         </Row>
                                     </Container>
                                 </div>

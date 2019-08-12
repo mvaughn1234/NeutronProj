@@ -30,7 +30,7 @@ exports.addAnalyzer = (req, res) => {
 };
 
 exports.startAnalyzer = (socket,seedAnalyzer) => {
-    const analyzer = spawn(`python3 /home/student/geant4/NeutronProj/scripts/py_scripts/runAnalyzer.py ${seedAnalyzer}`);
+    const analyzer = spawn(`python3 /home/student/geant4/NeutronProj/scripts/py_scripts/runAnalyzer.py ${str(seedAnalyzer)}`, {shell: true});
     analyzer.stdout.on('data', (stdout) => {
         socket.emit('runAnalyzerStdout', stdout);
         console.log(`stdout: ${stdout}`)

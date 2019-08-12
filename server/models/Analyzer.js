@@ -13,15 +13,15 @@ let AnalyzerSchema = new Schema({
         type: Array,
         default: [0] * 30
     },
+    eOut: {
+        type: Array,
+        default: [0] * 30
+    },
     weights: {
         accuracy: 0,
         weight: 0,
         size: 0,
         cost: 0,
-    },
-    eOut: {
-        type: Array,
-        default: [0] * 30
     },
     curDiff: {
         type: Number,

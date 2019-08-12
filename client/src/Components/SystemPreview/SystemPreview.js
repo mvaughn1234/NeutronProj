@@ -63,7 +63,7 @@ class SystemPreview extends Component {
                            boxShadow: '0 0 5px 2px rgba(0,0,0,0.25) inset',
                            border: '1px solid black'
                        }}>
-                {this.props.matlist[0].mat ? this.shellGen(this.props.matlist, this.props.matlist.length) : ''}
+                {this.props.matlist ? this.shellGen(this.props.matlist, this.props.matlist.length) : ''}
             </Container>
         );
     }
