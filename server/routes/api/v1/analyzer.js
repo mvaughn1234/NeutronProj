@@ -13,6 +13,7 @@ analyzerRouter.use('/', (req, res, next)=>{
         console.log(key, req.query[key])
         console.log(req.params)
     }
+    console.log('body:',req.body)
     next();
 });
 

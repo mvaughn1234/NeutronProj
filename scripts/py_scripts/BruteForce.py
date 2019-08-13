@@ -2,6 +2,33 @@ import numpy as np
 import requests
 import json
 from itertools import permutations
+import sys
+from types import ModuleType, FunctionType
+from gc import get_referents
+from pympler import asizeof
+
+# Custom objects know their class.
+# Function objects seem to know way too much, including modules.
+# Exclude modules as well.
+BLACKLIST = type, ModuleType, FunctionType
+
+
+def getsize(obj):
+    """sum size of object & members."""
+    if isinstance(obj, BLACKLIST):
+        raise TypeError('getsize() does not take argument of type: '+ str(type(obj)))
+    seen_ids = set()
+    size = 0
+    objects = [obj]
+    while objects:
+        need_referents = []
+        for obj in objects:
+            if not isinstance(obj, BLACKLIST) and id(obj) not in seen_ids:
+                seen_ids.add(id(obj))
+                size += sys.getsizeof(obj)
+                need_referents.append(obj)
+        objects = get_referents(*need_referents)
+    return size
 
 
 class NDArrayEncoder(json.JSONEncoder):
@@ -126,7 +153,7 @@ class BruteForce:
                 self.analysisData.set('curMats', curSup.tolist())
                 content = self.analysisData.getData()
                 url = 'http://10.103.72.187:5000/api/v1/analyzer/' + self.analysisData.get('analyzerID') + '/update'
-                requests.put(url, content)
+                requests.put(url, json.dumps(content))
 
             if not self.analysisData.get('running'):
                 lock.release()
