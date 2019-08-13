@@ -62,14 +62,16 @@ exports.addDataSet = (req, res) => {
                         }
                     })
             } else {
-                MatDB.update({'mat.name': 'moly', 'data': {'$elemMatch': {len: req.params.length, 'lenSet': {'$elemMatch': {eIn: req.params.eIn}}}}},
-                    {$set: {'data.$.lenSet.$.eOut': req.body.eOut, 'data.$.lenSet.$.bins': req.body.bins}})
-                    .then(matDB => {
-                        const msg = 'Adding new data set to ' + req.params.name + ' lenSet at length ' + req.params.length;
-                        console.log(msg);
-                        res.status(200).send(msg)
-                    })
-                    .catch(err => res.status(505).send(err))
+                // MatDB.find({'mat.name': 'moly', 'data': {'$elemMatch': {len: req.params.length, 'lenSet': {'$elemMatch': {eIn: req.params.eIn}}}}},
+                //     {$set: {'data.$.lenSet.$.eOut': req.body.eOut, 'data.$.lenSet.$.bins': req.body.bins}})
+                //     .then(matDB => {
+                //         const msg = 'Adding new data set to ' + req.params.name + ' lenSet at length ' + req.params.length;
+                //         console.log(msg);
+                //         res.status(200).send(msg)
+                //     })
+                //     .catch(err => res.status(505).send(err))
+                let temp = matDB1.data.filter(lenSet => lenSet.len === req.params.length && lenSet.lenSet.includes({'eIn': req.params.eIn})).lenSet.filter(eSet => eSet.eIn === req.params.eIn)
+                console.log('filtered: ', temp)
 
             }
         })
