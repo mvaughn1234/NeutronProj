@@ -26,7 +26,7 @@ exports.addDataSet = (req, res) => {
                                         Mat.find({"name": req.params.name})
                                             .then(mat => {
                                                 if (mat.length === 0) {
-                                                    res.status(500).send("Couldn't find material")
+                                                    res.status(500).send("Couldn't find material:", err)
                                                 } else {
                                                     const lenSet = {len: req.params.length, lenSet: [req.body]};
                                                     const newDB = {mat: mat[0], data: [lenSet]};
@@ -46,7 +46,7 @@ exports.addDataSet = (req, res) => {
                                                 console.log(msg);
                                                 res.status(200).send(msg)
                                             })
-                                            .catch(err => res.status(500).send(err))
+                                            .catch(err => res.status(500).send("couldn't start new len set:", err))
                                     }
                                 })
                         } else {
@@ -58,7 +58,7 @@ exports.addDataSet = (req, res) => {
                                     console.log(msg);
                                     res.status(200).send(msg)
                                 })
-                                .catch(err => res.status(500).send(err))
+                                .catch(err => res.status(500).send("couldn't add new dataset to given len set:", err))
                         }
                     })
             } else {
@@ -69,7 +69,7 @@ exports.addDataSet = (req, res) => {
                         console.log(msg);
                         res.status(200).send(msg)
                     })
-                    .catch(err => res.status(500).send(err))
+                    .catch(err => res.status(500).send("couldn't replace lenset:", err))
 
             }
         })
