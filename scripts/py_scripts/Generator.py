@@ -7,6 +7,7 @@ from Props import Props
 from functools import reduce
 from mongoengine import connect
 import requests
+import numpy as np
 
 
 class Generator:
@@ -45,11 +46,19 @@ class Generator:
     def editRunFile(self, src, dst):
         matLinesConcat = reduce(lambda acc, curr: curr + acc, self.matLines)
         lenLinesConcat = reduce(lambda acc, curr: curr + acc, self.lenLines)
+
+        dx = (np.log10(self.energyMax) - np.log10(self.energyMin)) / (self.numBins - 1)
+        eMinHist = self.energyMin / np.power(10, dx / 2)  # what goes into the macrofile
+        eMaxHist = self.energyMax * np.power(10, dx / 2)  # what goes into the macrofile
+
         replace = {'/testhadr/det/setMat\n': matLinesConcat,
                    '/testhadr/det/setRadius\n': lenLinesConcat,
                    '/gun/energy\n': '/gun/energy {} MeV\n'.format(self.energy),
                    '/analysis/setFileName\n': '/analysis/setFileName {}\n'.format(self.destFileName),
                    '/analysis/setFileName\n': '/analysis/setFileName {}\n'.format(self.destFileName),
+                   '/analysis/h1/set 6\n': '/analysis/h1/set 6 {} {}  {} MeV {} #neutrons\n'.format(self.numBins,
+                                                                                                    eMinHist, eMaxHist,
+                                                                                                    self.scale),
                    '/run/printProgress\n': '/run/printProgress {}\n'.format(self.printProg),
                    '/run/beamOn\n': '/run/beamOn {}\n'.format(self.beamOn)
                    }
@@ -74,7 +83,7 @@ class Generator:
             for line in asciiFile:
                 matches = re.findall('(\-?\d+\.\d+e[\-\+]\d+)', line)
                 if matches:
-                    currentRunData['bins'].append(10**float(matches[0]))
+                    currentRunData['bins'].append(10 ** float(matches[0]))
                     currentRunData['eOut'].append(float(matches[1]))
                     i += 1
 
@@ -82,8 +91,8 @@ class Generator:
 
         url = self.url + 'api/v1/matDB/' + self.mats[0] + '/' + str(self.lengths[0]) + '/' + str(self.energy) + '/add'
         mat = requests.put(url, currentRunData)
-        print('-'*30+'\n'+'data: \n\t', str(currentRunData)+'\n'+'='*30)
-        print('-'*30+'\n'+'response: \n\t', str(mat)+'\n'+'='*30)
+        print('-' * 30 + '\n' + 'data: \n\t', str(currentRunData) + '\n' + '=' * 30)
+        print('-' * 30 + '\n' + 'response: \n\t', str(mat) + '\n' + '=' * 30)
 
     def run(self, lock, sem):
         # sys.stdout = open(str(os.getpid()) + ".out", "a")
