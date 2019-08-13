@@ -15,6 +15,7 @@ exports.getMatDB = (req, res) => {
 exports.addDataSet = (req, res) => {
     MatDB.find({'mat.name': req.params.name, 'data.len': req.params.length, 'data.lenSet.eIn': req.params.eIn})
         .then(matDB1 => {
+            console.log('matdb1:', matdb1)
             if (matDB1.length === 0) {
                 MatDB.find({'mat.name': req.params.name, 'data.len': req.params.length})
                     .then(matDB => {

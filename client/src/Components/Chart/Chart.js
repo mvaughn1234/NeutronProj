@@ -88,7 +88,7 @@ class DataChart extends Component {
                 data: this.props.data[0].map(elem => elem/this.props.data[0].reduce((acc,cur) => acc+cur, 0),0)
             }, {
                 label: 'Current',
-                data: Object.assign(labels).map(elem => elem/Math.max(...labels))
+                data: this.props.data[1]
             }];
             const labels2 = labels.map(label => String(label).substr(0, 5));
             let chartData = {labels: labels2, datasets: datasets};

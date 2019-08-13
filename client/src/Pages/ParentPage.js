@@ -182,28 +182,47 @@ class ParentPage extends Component {
             this.state.analyzerSocket.emit('runAnalyzer', id);
             return id;
         }).then(id => {
-            console.log('id: ', id)
-            let i = 0;
-            while (running && i < 15) {
-                i++;
-                if (new Date().getTime() - start > 250) {
+            console.log('id: ', id);
+            // let i = 0;
+            try {
+                let interval = setInterval( () => {
                     axios.get(`http://10.103.72.187:5000/api/v1/analyzer/${id}`)
                         .then(res => {
                             let analysisData = res.data;
-                            console.log('data', analysisData);
-                            running = analysisData.running;
+                            console.log('data: ', analysisData)
                             this.setState({analysisData})
+                            if (this.state.analysisData.running === false){
+                                clearInterval(interval);
+                            }
+                        })
+                        .catch(err => {
+                            clearInterval(interval);
+                            console.log('err: ', err);
                         });
-                    start = new Date().getTime();
-                }
+                }, 1000);
+            } catch(e) {
+                console.log(e);
             }
-            axios.get(`http://10.103.72.187:5000/api/v1/analyzer/${id}`)
-                .then(res => {
-                    let analysisData = res.data;
-                    console.log('data', analysisData);
-                    running = analysisData.running;
-                    this.setState({analysisData})
-                });
+            // while (running && i < 15) {
+            //     i++;
+            //     if (new Date().getTime() - start > 250) {
+            //         axios.get()
+            //             .then(res => {
+            //                 let analysisData = res.data;
+            //                 console.log('data', analysisData);
+            //                 running = analysisData.running;
+            //                 this.setState({analysisData})
+            //             });
+            //         start = new Date().getTime();
+            //     }
+            // }
+            // axios.get(`http://10.103.72.187:5000/api/v1/analyzer/${id}`)
+            //     .then(res => {
+            //         let analysisData = res.data;
+            //         console.log('data', analysisData);
+            //         running = analysisData.running;
+            //         this.setState({analysisData})
+            //     });
         });
     };
 
