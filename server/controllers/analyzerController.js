@@ -18,6 +18,7 @@ exports.getAnalyzer = (req, res) => {
 exports.updateAnalyzer = (req, res) => {
     Analyzer.findByIdAndUpdate(req.params.id, {$set: req.body}, {useFindAndModify: false})
         .then(analyzer => {
+            console.log('body:', req.body)
             res.status(200).json(analyzer);
         })
         .catch(err => {
