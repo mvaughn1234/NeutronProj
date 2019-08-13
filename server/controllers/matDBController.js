@@ -13,7 +13,7 @@ exports.getMatDB = (req, res) => {
 };
 
 exports.addDataSet = (req, res) => {
-    MatDB.find({'mat.name': 'moly', 'data': {'$elemMatch': {len: req.params.length, 'lenSet': {'$elemMatch': {eIn: req.params.eIn}}}}})
+    MatDB.find({'mat.name': req.params.name, 'data': {'$elemMatch': {len: req.params.length, 'lenSet': {'$elemMatch': {eIn: req.params.eIn}}}}})
         .then(matDB1 => {
             if (matDB1.length === 0) {
                 MatDB.find({'mat.name': req.params.name, 'data': {'$elemMatch': {len: req.params.length}}})
@@ -63,7 +63,7 @@ exports.addDataSet = (req, res) => {
                     })
             } else {
                 // let temp = matDB1.data.toJSON.filter(lenSet => lenSet.len === req.params.length && lenSet.lenSet.includes({'eIn': req.params.eIn})).lenSet.filter(eSet => eSet.eIn === req.params.eIn)
-                MatDB.find({'mat.name': 'moly', 'data': {'$elemMatch': {len: req.params.length, 'lenSet': {'$elemMatch': {eIn: req.params.eIn}}}}},
+                MatDB.find({'mat.name': req.params.name, 'data': {'$elemMatch': {len: req.params.length, 'lenSet': {'$elemMatch': {eIn: req.params.eIn}}}}},
                     {$set: {'data.lenSet.$.eOut': req.body.eOut, 'data.$.lenSet.$.bins': req.body.bins}})
                     .then(matDB => {
                         const msg = 'Adding new data set to ' + req.params.name + ' lenSet at length ' + req.params.length;
