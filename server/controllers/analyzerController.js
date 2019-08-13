@@ -8,7 +8,10 @@ exports.getAnalyzerList = (req, res) => {
 
 exports.getAnalyzer = (req, res) => {
     Analyzer.findById(req.params.id)
-        .then(analyzer => res.json(analyzer))
+        .then(analyzer => {
+            console.log('retrieved: ', analyzer)
+            res.json(analyzer)
+        })
         .catch(err => res.status(500).send(err));
 };
 
@@ -16,6 +19,7 @@ exports.updateAnalyzer = (req, res) => {
     Analyzer.findByIdAndUpdate(req.params.id, {$set: req.body}, {useFindAndModify: false})
         .then(analyzer => {
             console.log(req.params.id);
+            console.log('updated:', analyzer);
             res.json(analyzer);
         })
         .catch(err => {

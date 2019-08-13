@@ -175,6 +175,7 @@ class ParentPage extends Component {
     runAnalysis() {
         let id;
         let running = true;
+        let start = new Date().getTime();
         axios.post('http://10.103.72.187:5000/api/v1/analyzer/new', this.state.analysisData).then(res => {
             id = res.data._id;
             this.setState({currentAnalyzer: id});
@@ -183,16 +184,26 @@ class ParentPage extends Component {
         }).then(id => {
             console.log('id: ', id)
             let i = 0;
-            while (running && i < 10000) {
+            while (running && i < 15) {
                 i++;
-                axios.get(`http://10.103.72.187:5000/api/v1/analyzer/${id}`)
-                    .then(res => {
-                        let analysisData = res.data;
-                        console.log('data', analysisData);
-                        running = analysisData.running;
-                        this.setState({analysisData})
-                    });
+                if (new Date().getTime() - start > 250) {
+                    axios.get(`http://10.103.72.187:5000/api/v1/analyzer/${id}`)
+                        .then(res => {
+                            let analysisData = res.data;
+                            console.log('data', analysisData);
+                            running = analysisData.running;
+                            this.setState({analysisData})
+                        });
+                    start = new Date().getTime();
+                }
             }
+            axios.get(`http://10.103.72.187:5000/api/v1/analyzer/${id}`)
+                .then(res => {
+                    let analysisData = res.data;
+                    console.log('data', analysisData);
+                    running = analysisData.running;
+                    this.setState({analysisData})
+                });
         });
     };
 
