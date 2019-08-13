@@ -56,9 +56,9 @@ class Generator:
                    '/gun/energy\n': '/gun/energy {} MeV\n'.format(self.energy),
                    '/analysis/setFileName\n': '/analysis/setFileName {}\n'.format(self.destFileName),
                    '/analysis/setFileName\n': '/analysis/setFileName {}\n'.format(self.destFileName),
-                   '/analysis/h1/set 6\n': '/analysis/h1/set 6 {} {}  {} MeV {} #neutrons\n'.format(self.numBins,
-                                                                                                    eMinHist, eMaxHist,
-                                                                                                    self.scale),
+                   '/analysis/h1/set 6\n': '/analysis/h1/set 6 {} {} {} MeV log10 #neutrons\n'.format(self.numBins,
+                                                                                                       eMinHist,
+                                                                                                       eMaxHist),
                    '/run/printProgress\n': '/run/printProgress {}\n'.format(self.printProg),
                    '/run/beamOn\n': '/run/beamOn {}\n'.format(self.beamOn)
                    }
