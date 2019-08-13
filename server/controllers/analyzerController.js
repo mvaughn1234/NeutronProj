@@ -22,6 +22,7 @@ exports.updateAnalyzer = (req, res) => {
             res.status(200).json(analyzer);
         })
         .catch(err => {
+            console.log('body: ', req.body)
             res.status(400).send(err);
         })
 };
