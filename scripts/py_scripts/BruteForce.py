@@ -121,7 +121,7 @@ class BruteForce:
                 self.analysisData.set('curDiff', diffNorm)
                 self.analysisData.set('curMats', curSup)
                 requests.put(
-                    ("http://10.103.72.187:5002/api/v1/analyzer/{id}/update".format(id=self.analysisData.get('analyzerID'))),
+                    ("http://10.103.72.187:5000/api/v1/analyzer/{id}/update".format(id=self.analysisData.get('analyzerID'))),
                     data=json.dumps(self.analysisData.getData(),cls=NumpyEncoder))
 
             if not self.analysisData.get('running'):

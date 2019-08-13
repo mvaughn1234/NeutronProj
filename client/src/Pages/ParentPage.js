@@ -174,18 +174,24 @@ class ParentPage extends Component {
 
     runAnalysis() {
         let id;
+        let running = true;
         axios.post('http://10.103.72.187:5000/api/v1/analyzer/new', this.state.analysisData).then(res => {
             id = res.data._id;
             this.setState({currentAnalyzer: id});
             this.state.analyzerSocket.emit('runAnalyzer', id);
-        }).then(data => {
-            while (this.state.analysisData.running){
-                axios.get(`http://10.103.72.187:5002/api/v1/analyzer/${id}`)
+            return id;
+        }).then(id => {
+            console.log('id: ', id)
+            let i = 0;
+            while (running && i < 10000) {
+                i++;
+                axios.get(`http://10.103.72.187:5000/api/v1/analyzer/${id}`)
                     .then(res => {
                         let analysisData = res.data;
                         console.log('data', analysisData);
+                        running = analysisData.running;
                         this.setState({analysisData})
-                    })
+                    });
             }
         });
     };

@@ -31,14 +31,14 @@ def updater(analysisData, interval, lock):
     while analysisData.get('running'):
         time.sleep(interval / 1000)
         serverData = requests.get(
-            ("http://10.103.72.187:5002/api/v1/analyzer/{id}".format(id=analysisData.get('analyzerID')))).json()
+            ("http://10.103.72.187:5000/api/v1/analyzer/{id}".format(id=analysisData.get('analyzerID')))).json()
         lock.acquire(True)
         analysisData.set('running', serverData['running'])
         analysisData.set('weightsChanged', np.linalg.norm(
             np.array(list(analysisData.get('weights').values())) - np.array(list(serverData['weights'].values()))))
         analysisData.set('weights', serverData['weights'])
         requests.put(
-            ("http://10.103.72.187:5002/api/v1/analyzer/{id}/update".format(id=analysisData.get('analyzerID'))),
+            ("http://10.103.72.187:5000/api/v1/analyzer/{id}/update".format(id=analysisData.get('analyzerID'))),
             data=json.dumps(analysisData.getData()))
         lock.release()
 
@@ -46,7 +46,7 @@ def updater(analysisData, interval, lock):
 if __name__ == '__main__':
     if sys.argv and sys.argv[1]:
         analyzerID = sys.argv[1]
-        analysisSeed = requests.get(("http://10.103.72.187:5002/api/v1/analyzer/{id}".format(id=analyzerID))).json()
+        analysisSeed = requests.get(("http://10.103.72.187:5000/api/v1/analyzer/{id}".format(id=analyzerID))).json()
         mats = requests.get("http://10.103.72.187:5000/api/v1/mat").json()
         matData = requests.get("http://10.103.72.187:5000/api/v1/matDB").json()
         while not (analysisSeed and mats and matData):
