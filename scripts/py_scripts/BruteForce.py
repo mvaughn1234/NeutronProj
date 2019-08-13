@@ -153,7 +153,7 @@ class BruteForce:
                 self.analysisData.set('curMats', curSup.tolist())
                 content = self.analysisData.getData()
                 url = 'http://10.103.72.187:5000/api/v1/analyzer/' + self.analysisData.get('analyzerID') + '/update'
-                requests.put(url, json.dumps(content))
+                requests.put(url, content)
 
             if not self.analysisData.get('running'):
                 lock.release()
