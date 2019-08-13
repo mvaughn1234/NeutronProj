@@ -19,7 +19,7 @@ exports.updateAnalyzer = (req, res) => {
     Analyzer.findByIdAndUpdate(req.params.id, {$set: req.body}, {useFindAndModify: false})
         .then(analyzer => {
             console.log(req.params.id);
-            console.log('updated:', analyzer);
+            console.log('updated:', analyzer, req.body);
             res.json(analyzer);
         })
         .catch(err => {
