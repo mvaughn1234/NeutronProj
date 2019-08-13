@@ -45,7 +45,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(bodyParser());
+app.use(bodyParser({limit: '5mb'}));
 
 // Socket.io Generate Data
 const generator = http.Server(app);

@@ -3,7 +3,8 @@ import requests
 import json
 from itertools import permutations
 
-class NumpyEncoder(json.JSONEncoder):
+
+class NDArrayEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, np.ndarray):
             return obj.tolist()
@@ -34,9 +35,12 @@ class BruteForce:
                     enSet = matDict[mat][length][eIn]
                     arr = np.array([float(value) for (key, value) in sorted(matDict[mat][length][eIn].items())])
                     arr2 = np.hstack(
-                        [np.fliplr(np.array(sorted(matDict[mat][length][eIn].items()))), np.ones((len(arr), 1)) * length,
+                        [np.fliplr(np.array(sorted(matDict[mat][length][eIn].items()))),
+                         np.ones((len(arr), 1)) * length,
                          np.array(mat).repeat(30).reshape(30, 1)])
-                    arr2[:,0] = np.ndarray.astype(np.ndarray.astype(arr2[:,0],dtype=float)/np.sum(np.ndarray.astype(arr2[:,0],dtype=float)),dtype=arr2.dtype)
+                    arr2[:, 0] = np.ndarray.astype(
+                        np.ndarray.astype(arr2[:, 0], dtype=float) / np.sum(np.ndarray.astype(arr2[:, 0], dtype=float)),
+                        dtype=arr2.dtype)
                     tempSub.append(arr)
                     tempSub2.append(arr2)
                 tempSub3 = np.transpose(np.array(tempSub))
@@ -116,13 +120,13 @@ class BruteForce:
             curSup = supList[i]
             lock.acquire(True)
             if diffNorm < self.analysisData.get('curDiff'):
-                self.analysisData.set('eOut', eOut)
+                self.analysisData.set('eOut', eOut.tolist())
                 self.analysisData.set('iteration', i)
                 self.analysisData.set('curDiff', diffNorm)
-                self.analysisData.set('curMats', curSup)
-                requests.put(
-                    ("http://10.103.72.187:5000/api/v1/analyzer/{id}/update".format(id=self.analysisData.get('analyzerID'))),
-                    data=json.dumps(self.analysisData.getData(),cls=NumpyEncoder))
+                self.analysisData.set('curMats', curSup.tolist())
+                content = self.analysisData.getData()
+                url = 'http://10.103.72.187:5000/api/v1/analyzer/' + self.analysisData.get('analyzerID') + '/update'
+                requests.put(url, content)
 
             if not self.analysisData.get('running'):
                 lock.release()
@@ -138,6 +142,6 @@ class BruteForce:
             print('stopped')
         else:
             self.lock.acquire(True)
-            self.analysisData.set('running',False)
+            self.analysisData.set('running', False)
             self.lock.release()
             print('done')
