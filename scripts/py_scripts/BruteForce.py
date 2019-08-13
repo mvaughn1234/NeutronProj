@@ -123,9 +123,8 @@ class BruteForce:
                 self.analysisData.set('iteration', i)
                 self.analysisData.set('curDiff', diffNorm)
                 self.analysisData.set('curMats', curSup.tolist())
-                content = self.analysisData.getData()
                 url = 'http://10.103.72.187:5000/api/v1/analyzer/' + self.analysisData.get('analyzerID') + '/update'
-                requests.put(url, json=content)
+                requests.put(url, json=self.analysisData.getData())
 
             if not self.analysisData.get('running'):
                 lock.release()
@@ -142,5 +141,7 @@ class BruteForce:
         else:
             self.lock.acquire(True)
             self.analysisData.set('running', False)
+            url = 'http://10.103.72.187:5000/api/v1/analyzer/' + self.analysisData.get('analyzerID') + '/update'
+            requests.put(url, json=self.analysisData.getData())
             self.lock.release()
             print('done')
