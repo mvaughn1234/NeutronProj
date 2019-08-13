@@ -48,6 +48,9 @@ let AnalyzerSchema = new Schema({
         type: Boolean,
         default: true,
     },
+    analyzerID: {
+        type: String,
+    }
 });
 
 module.exports = Analyzer = mongoose.model('analyzer', AnalyzerSchema);
