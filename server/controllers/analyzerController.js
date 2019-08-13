@@ -19,6 +19,7 @@ exports.updateAnalyzer = (req, res) => {
     Analyzer.findByIdAndUpdate(req.params.id, {$set: req.body})
         .then(analyzer => {
             console.log('body:', req.body)
+            console.log('weights:', req.body.weights)
             res.status(200).json(analyzer);
         })
         .catch(err => {
