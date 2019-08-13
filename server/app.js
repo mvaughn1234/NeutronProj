@@ -45,7 +45,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(bodyParser({
+app.use(bodyParser.json({
   parameterLimit: 100000,
   limit: '50mb',
   extended: true
