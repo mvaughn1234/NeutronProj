@@ -91,15 +91,14 @@ class BruteForce:
         extended[matPerms == 'Galactic'] = galactic
 
         r = list(range(0, np.shape(extended)[2], 1))
-        support = np.ndarray((np.shape(extended)[0], 3, 30, 30, np.shape(extended)[2]),
+        support = np.ndarray((np.shape(extended)[0], 2, np.shape(extended)[2]),
                              dtype=matTables2[list(matTables2.keys())[0]].dtype)
         data = np.ndarray((np.shape(extended)[0], 30, 30), dtype=np.float)
         for i in range(0, np.shape(extended)[0], 1):
             data[i] = np.linalg.multi_dot(np.ndarray.astype(extended[i, :, 0], dtype=float))
             for j in r:
-                support[i, 0, :, :, j] = extended[i, j, 1]
-                support[i, 1, :, :, j] = extended[i, j, 2]
-                support[i, 2, :, :, j] = extended[i, j, 3]
+                support[i, 0, j] = extended[i, j, 2, 0, 0]
+                support[i, 1, j] = extended[i, j, 3, 0, 0]
 
         return data, support
 
@@ -126,7 +125,7 @@ class BruteForce:
                 self.analysisData.set('curMats', curSup.tolist())
                 content = self.analysisData.getData()
                 url = 'http://10.103.72.187:5000/api/v1/analyzer/' + self.analysisData.get('analyzerID') + '/update'
-                requests.put(url, content)
+                requests.put(url, json=content)
 
             if not self.analysisData.get('running'):
                 lock.release()
