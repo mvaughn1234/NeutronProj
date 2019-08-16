@@ -58,31 +58,30 @@ class BruteForce:
             for length in matDict[mat]:
                 tempSub = []
                 tempSub2 = []
-                if (float(length) < 2):
-                    for eIn in sorted(matDict[mat][length]):
-                        enSet = matDict[mat][length][eIn]
-                        enSet_sorted = sorted([(float(i), float(j)) for (i, j) in matDict[mat][length][eIn].items()])
-                        arr = np.array([float(value) for (key, value) in enSet_sorted])
-                        arr = arr / np.sum(arr)
-                        arr2 = np.hstack(
-                            [np.fliplr(np.array(enSet_sorted)),
-                             np.ones((len(arr), 1)) * length,
-                             np.array(mat).repeat(30).reshape(30, 1)])
-                        arr2[:, 0] = np.ndarray.astype(
-                            np.ndarray.astype(arr2[:, 0], dtype=float) / np.sum(np.ndarray.astype(arr2[:, 0], dtype=float)),
-                            dtype=arr2.dtype)
-                        tempSub.append(arr)
-                        tempSub2.append(arr2)
-                    tempSub3 = np.transpose(np.array(tempSub))
-                    tempSub4 = np.transpose(np.array(tempSub2))
-                    if (temp is None):
-                        temp = tempSub3
-                    else:
-                        temp = np.dstack([temp, tempSub3])
-                    if (temp2 is None):
-                        temp2 = np.dstack(tempSub4).reshape(30, 30, 1, 4)
-                    else:
-                        temp2 = np.concatenate([temp2, np.dstack(tempSub4).reshape(30, 30, 1, 4)], 2)
+                for eIn in sorted(matDict[mat][length]):
+                    enSet = matDict[mat][length][eIn]
+                    enSet_sorted = sorted([(float(i), float(j)) for (i, j) in matDict[mat][length][eIn].items()])
+                    arr = np.array([float(value) for (key, value) in enSet_sorted])
+                    arr = arr / np.sum(arr)
+                    arr2 = np.hstack(
+                        [np.fliplr(np.array(enSet_sorted)),
+                         np.ones((len(arr), 1)) * length,
+                         np.array(mat).repeat(30).reshape(30, 1)])
+                    arr2[:, 0] = np.ndarray.astype(
+                        np.ndarray.astype(arr2[:, 0], dtype=float) / np.sum(np.ndarray.astype(arr2[:, 0], dtype=float)),
+                        dtype=arr2.dtype)
+                    tempSub.append(arr)
+                    tempSub2.append(arr2)
+                tempSub3 = np.transpose(np.array(tempSub))
+                tempSub4 = np.transpose(np.array(tempSub2))
+                if (temp is None):
+                    temp = tempSub3
+                else:
+                    temp = np.dstack([temp, tempSub3])
+                if (temp2 is None):
+                    temp2 = np.dstack(tempSub4).reshape(30, 30, 1, 4)
+                else:
+                    temp2 = np.concatenate([temp2, np.dstack(tempSub4).reshape(30, 30, 1, 4)], 2)
                 # temp[length] = np.ndarray(np.shape(temp3),buffer=temp3)
                 # temp[]
             matTables[mat] = temp
