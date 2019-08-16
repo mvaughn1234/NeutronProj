@@ -1,8 +1,10 @@
 import numpy as np
 import requests
 import json
-from itertools import permutations
+from itertools import permutations, product
+from functools import reduce
 import sys
+
 
 class NDArrayEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -15,6 +17,31 @@ class BruteForce:
     def __init__(self, analysisData, lock):
         self.analysisData = analysisData
         self.lock = lock
+
+    def mult_sets(self, mats, data, mode):
+        dataSet = list(map(lambda x: np.squeeze(np.dsplit(data[x], np.shape(data[x])[2])).tolist(), mats))
+        dataSet = list(map(lambda x: np.expand_dims(x, 0).tolist() if len(np.shape(x)) == 2 or (
+                    (np.shape(x)[2] == 4) and (len(np.shape(x)) == 3)) else x, dataSet))
+        perms = np.squeeze([list(i) for i in product(*dataSet)])
+        if (mode == 0):
+            perms = list(map(lambda x: np.linalg.multi_dot(np.ndarray.astype(perms[0],dtype=float)),perms))
+        else:
+            perms = list(map(lambda x: np.concatenate(x,1),perms))
+        return perms
+        # if len(mats) == 1:
+        #     ret = data[mats[0]]
+        #     ret = np.squeeze(np.dsplit(ret,np.shape(ret)[2])).tolist()
+        #     if (len(np.shape(ret)) == 2):
+        #         return np.expand_dims(ret,0).tolist()
+        #     return ret
+        # else:
+        #     cur = data[mats[0]]
+        #     cur = np.squeeze(np.dsplit(cur, np.shape(cur)[2])).tolist()
+        #     if (len(np.shape(cur)) == 2):
+        #         cur = np.expand_dims(cur,0).tolist()
+        #     deep = self.mult_sets(np.delete(mats,0),data,mode)
+        #     prod = np.squeeze([list(i) for i in product(*[cur,deep])]).tolist()
+        #     return prod
 
     def generateListOfCombinations(self):
         lock = self.lock
@@ -31,28 +58,31 @@ class BruteForce:
             for length in matDict[mat]:
                 tempSub = []
                 tempSub2 = []
-                for eIn in sorted(matDict[mat][length]):
-                    enSet = matDict[mat][length][eIn]
-                    arr = np.array([float(value) for (key, value) in sorted(matDict[mat][length][eIn].items())])
-                    arr2 = np.hstack(
-                        [np.fliplr(np.array(sorted(matDict[mat][length][eIn].items()))),
-                         np.ones((len(arr), 1)) * length,
-                         np.array(mat).repeat(30).reshape(30, 1)])
-                    arr2[:, 0] = np.ndarray.astype(
-                        np.ndarray.astype(arr2[:, 0], dtype=float) / np.sum(np.ndarray.astype(arr2[:, 0], dtype=float)),
-                        dtype=arr2.dtype)
-                    tempSub.append(arr)
-                    tempSub2.append(arr2)
-                tempSub3 = np.transpose(np.array(tempSub))
-                tempSub4 = np.transpose(np.array(tempSub2))
-                if (temp):
-                    temp = np.concatenate((temp, tempSub3))
-                else:
-                    temp = tempSub3
-                if (temp2):
-                    temp2 = np.concatenate((temp2, tempSub4))
-                else:
-                    temp2 = tempSub4
+                if (float(length) < 2):
+                    for eIn in sorted(matDict[mat][length]):
+                        enSet = matDict[mat][length][eIn]
+                        enSet_sorted = sorted([(float(i), float(j)) for (i, j) in matDict[mat][length][eIn].items()])
+                        arr = np.array([float(value) for (key, value) in enSet_sorted])
+                        arr = arr / np.sum(arr)
+                        arr2 = np.hstack(
+                            [np.fliplr(np.array(enSet_sorted)),
+                             np.ones((len(arr), 1)) * length,
+                             np.array(mat).repeat(30).reshape(30, 1)])
+                        arr2[:, 0] = np.ndarray.astype(
+                            np.ndarray.astype(arr2[:, 0], dtype=float) / np.sum(np.ndarray.astype(arr2[:, 0], dtype=float)),
+                            dtype=arr2.dtype)
+                        tempSub.append(arr)
+                        tempSub2.append(arr2)
+                    tempSub3 = np.transpose(np.array(tempSub))
+                    tempSub4 = np.transpose(np.array(tempSub2))
+                    if (temp is None):
+                        temp = tempSub3
+                    else:
+                        temp = np.dstack([temp, tempSub3])
+                    if (temp2 is None):
+                        temp2 = np.dstack(tempSub4).reshape(30, 30, 1, 4)
+                    else:
+                        temp2 = np.concatenate([temp2, np.dstack(tempSub4).reshape(30, 30, 1, 4)], 2)
                 # temp[length] = np.ndarray(np.shape(temp3),buffer=temp3)
                 # temp[]
             matTables[mat] = temp
@@ -60,11 +90,13 @@ class BruteForce:
 
         tempName = list(matTables2.keys())[0]
         numBins = np.shape(matTables2[tempName][0])[0]
-        temp = np.ndarray.copy(matTables2[tempName])
-        galactic = temp
-        galactic[0] = np.eye((numBins))
-        galactic[2] = np.ones((numBins, numBins))
-        galactic[3][temp[3] == tempName] = 'Galactic'
+        temp = np.ndarray.copy(matTables2[tempName])[:, :, 0, :]
+        galactic = temp.reshape(30, 30, 1, 4)
+        galactic[:, :, 0, 0] = np.eye((numBins))
+        galactic[:, :, 0, 2] = np.ones((numBins, numBins))
+        galactic[:, :, 0, 3][temp[:, :, 3] == tempName] = 'Galactic'
+        matTables['Galactic'] = galactic[:, :, :, 0]
+        matTables2['Galactic'] = galactic
 
         matPerms = None
         for i in range(1, len(matNames) + 1, 1):
@@ -84,23 +116,39 @@ class BruteForce:
                                                                                          np.shape(tempNd)[1])])
                 matPerms = np.vstack([matPerms, tempNd2])
 
-        extended = np.ndarray((np.shape(matPerms)[0], np.shape(matPerms)[1], 4, 30, 30),
-                              dtype=matTables2[list(matTables2.keys())[0]].dtype)
-        for mat in matNames:
-            extended[matPerms == mat] = matTables2[mat]
-        extended[matPerms == 'Galactic'] = galactic
+        # extended = np.ndarray((np.shape(matPerms)[0], np.shape(matPerms)[1], 4, 30, 30),
+        #                       dtype=matTables2[list(matTables2.keys())[0]].dtype)
+        # for mat in matNames:
+        #     extended[matPerms == mat] = matTables2[mat]
+        # extended[matPerms == 'Galactic'] = galactic
+        #
+        # r = list(range(0, np.shape(extended)[2], 1))
+        # support = np.ndarray((np.shape(extended)[0], 2, np.shape(extended)[2]),
+        #                      dtype=matTables2[list(matTables2.keys())[0]].dtype)
+        # data = np.ndarray((np.shape(extended)[0], 30, 30), dtype=np.float)
+        # for i in range(0, np.shape(extended)[0], 1):
+        #     data[i] = np.linalg.multi_dot(np.ndarray.astype(extended[i, :, 0], dtype=float))
+        #     for j in r:
+        #         support[i, 0, j] = extended[i, j, 2, 0, 0]
+        #         support[i, 1, j] = extended[i, j, 3, 0, 0]
+        data = None
+        support = None
+        for i in range(0, np.shape(matPerms)[0], 1):
+            if i%10 == 0:
+                print('here, ', i)
+            matSet = matPerms[i];
+            res = self.mult_sets(matSet, matTables, 0)
+            sup = self.mult_sets(matSet, matTables2, 1)
+            if data is None:
+                data = res
+            else:
+                data = np.vstack([data, res])
+            if support is None:
+                support = sup
+            else:
+                support = np.vstack([support, sup])
 
-        r = list(range(0, np.shape(extended)[2], 1))
-        support = np.ndarray((np.shape(extended)[0], 2, np.shape(extended)[2]),
-                             dtype=matTables2[list(matTables2.keys())[0]].dtype)
-        data = np.ndarray((np.shape(extended)[0], 30, 30), dtype=np.float)
-        for i in range(0, np.shape(extended)[0], 1):
-            data[i] = np.linalg.multi_dot(np.ndarray.astype(extended[i, :, 0], dtype=float))
-            for j in r:
-                support[i, 0, j] = extended[i, j, 2, 0, 0]
-                support[i, 1, j] = extended[i, j, 3, 0, 0]
-
-        return data, support
+        return data, sup
 
     def processData(self, matCombinationDataCompressed, matCombinationSupportData):
         matList = matCombinationDataCompressed
