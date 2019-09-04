@@ -3,6 +3,7 @@ import requests
 import json
 from itertools import permutations, product
 from functools import reduce
+from timeit import default_timer as timer
 import sys
 
 
@@ -20,13 +21,15 @@ class BruteForce:
 
     def mult_sets(self, mats, data, mode):
         dataSet = list(map(lambda x: np.squeeze(np.dsplit(data[x], np.shape(data[x])[2])).tolist(), mats))
-        dataSet = list(map(lambda x: np.expand_dims(x, 0).tolist() if len(np.shape(x)) == 2 or (
-                    (np.shape(x)[2] == 4) and (len(np.shape(x)) == 3)) else x, dataSet))
+        dataSet = list(map(lambda x: np.expand_dims(x, 0).tolist() if (len(np.shape(x)) == 2 and np.shape(x)[0] == 30) or (
+                    (np.shape(x)[0] == 2) and (len(np.shape(x)) == 1)) else x, dataSet))
         perms = np.squeeze([list(i) for i in product(*dataSet)])
         if (mode == 0):
             perms = list(map(lambda x: np.linalg.multi_dot(np.ndarray.astype(perms[0],dtype=float)),perms))
         else:
-            perms = list(map(lambda x: np.concatenate(x,1),perms))
+            perms = list(perms)
+        # else:
+        #     perms = list(map(lambda x: np.concatenate(x,1),perms))
         return perms
         # if len(mats) == 1:
         #     ret = data[mats[0]]
@@ -57,21 +60,21 @@ class BruteForce:
             temp2 = None
             for length in matDict[mat]:
                 tempSub = []
-                tempSub2 = []
+                tempSub2 = [length, mat]
                 for eIn in sorted(matDict[mat][length]):
                     enSet = matDict[mat][length][eIn]
                     enSet_sorted = sorted([(float(i), float(j)) for (i, j) in matDict[mat][length][eIn].items()])
                     arr = np.array([float(value) for (key, value) in enSet_sorted])
                     arr = arr / np.sum(arr)
-                    arr2 = np.hstack(
-                        [np.fliplr(np.array(enSet_sorted)),
-                         np.ones((len(arr), 1)) * length,
-                         np.array(mat).repeat(30).reshape(30, 1)])
-                    arr2[:, 0] = np.ndarray.astype(
-                        np.ndarray.astype(arr2[:, 0], dtype=float) / np.sum(np.ndarray.astype(arr2[:, 0], dtype=float)),
-                        dtype=arr2.dtype)
+                    # arr2 = np.hstack(
+                    #     [np.fliplr(np.array(enSet_sorted)),
+                    #      np.ones((len(arr), 1)) * length,
+                    #      np.array(mat).repeat(30).reshape(30, 1)])
+                    # arr2[:, 0] = np.ndarray.astype(
+                    #     np.ndarray.astype(arr2[:, 0], dtype=float) / np.sum(np.ndarray.astype(arr2[:, 0], dtype=float)),
+                    #     dtype=arr2.dtype)
                     tempSub.append(arr)
-                    tempSub2.append(arr2)
+                    # tempSub2.append(arr2)
                 tempSub3 = np.transpose(np.array(tempSub))
                 tempSub4 = np.transpose(np.array(tempSub2))
                 if (temp is None):
@@ -79,23 +82,18 @@ class BruteForce:
                 else:
                     temp = np.dstack([temp, tempSub3])
                 if (temp2 is None):
-                    temp2 = np.dstack(tempSub4).reshape(30, 30, 1, 4)
+                    temp2 = tempSub4
                 else:
-                    temp2 = np.concatenate([temp2, np.dstack(tempSub4).reshape(30, 30, 1, 4)], 2)
+                    temp2 = np.dstack([temp2, tempSub4])
                 # temp[length] = np.ndarray(np.shape(temp3),buffer=temp3)
                 # temp[]
             matTables[mat] = temp
             matTables2[mat] = temp2
 
-        tempName = list(matTables2.keys())[0]
-        numBins = np.shape(matTables2[tempName][0])[0]
-        temp = np.ndarray.copy(matTables2[tempName])[:, :, 0, :]
-        galactic = temp.reshape(30, 30, 1, 4)
-        galactic[:, :, 0, 0] = np.eye((numBins))
-        galactic[:, :, 0, 2] = np.ones((numBins, numBins))
-        galactic[:, :, 0, 3][temp[:, :, 3] == tempName] = 'Galactic'
-        matTables['Galactic'] = galactic[:, :, :, 0]
-        matTables2['Galactic'] = galactic
+        tempName = list(matTables.keys())[0]
+        numBins = np.shape(matTables[tempName])[0]
+        matTables['Galactic'] = np.expand_dims(np.eye(numBins),2)
+        matTables2['Galactic'] = np.expand_dims(np.array([[1,'Galactic']]),2)
 
         matPerms = None
         for i in range(1, len(matNames) + 1, 1):
@@ -132,22 +130,29 @@ class BruteForce:
         #         support[i, 1, j] = extended[i, j, 3, 0, 0]
         data = None
         support = None
+        t = [0,0,0,0]
+        s = timer()
         for i in range(0, np.shape(matPerms)[0], 1):
             if i%10 == 0:
-                print('here, ', i)
-            matSet = matPerms[i];
-            res = self.mult_sets(matSet, matTables, 0)
-            sup = self.mult_sets(matSet, matTables2, 1)
-            if data is None:
-                data = res
-            else:
-                data = np.vstack([data, res])
-            if support is None:
-                support = sup
-            else:
-                support = np.vstack([support, sup])
+                print('here, ', i, ' ', t)
+            if i < 80:
+                matSet = matPerms[i];
+                res = self.mult_sets(matSet, matTables, 0)
+                t[0] = t[0] + timer() - s; s = timer();
+                sup = self.mult_sets(matSet, matTables2, 1)
+                t[1] = t[1] + timer() - s; s = timer();
+                if data is None:
+                    data = res
+                else:
+                    data = np.vstack([data, res])
+                    t[2] = t[2] + timer() - s; s = timer();
+                if support is None:
+                    support = sup
+                else:
+                    support = np.vstack([support, sup])
+                    t[3] = t[3] + timer() - s; s = timer();
 
-        return data, sup
+        return data, support
 
     def processData(self, matCombinationDataCompressed, matCombinationSupportData):
         matList = matCombinationDataCompressed
