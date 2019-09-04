@@ -128,8 +128,14 @@ class BruteForce:
         #     for j in r:
         #         support[i, 0, j] = extended[i, j, 2, 0, 0]
         #         support[i, 1, j] = extended[i, j, 3, 0, 0]
-        data = None
-        support = None
+        lock.acquire(True)
+        eIn = np.array(self.analysisData.get('eIn'))
+        eDes = np.array(self.analysisData.get('eDes'))
+        eIn = eIn / np.sum(eIn)
+        eDes = eDes / np.sum(eDes)
+        lock.release()
+        # data = None
+        # support = None
         t = [0,0,0,0]
         s = timer()
         for i in range(0, np.shape(matPerms)[0], 1):
@@ -141,18 +147,37 @@ class BruteForce:
                 t[0] = t[0] + timer() - s; s = timer();
                 sup = self.mult_sets(matSet, matTables2, 1)
                 t[1] = t[1] + timer() - s; s = timer();
-                if data is None:
-                    data = res
-                else:
-                    data = np.vstack([data, res])
-                    t[2] = t[2] + timer() - s; s = timer();
-                if support is None:
-                    support = sup
-                else:
-                    support = np.vstack([support, sup])
-                    t[3] = t[3] + timer() - s; s = timer();
+                for i in list(range(0, np.shape(res)[0], 1)):
+                    eOut = np.dot(res[i], eIn)
+                    diff = np.subtract(eOut, eDes)
+                    diffNorm = np.linalg.norm(diff)
+                    curSup = sup[i]
+                    lock.acquire(True)
+                    if diffNorm < self.analysisData.get('curDiff'):
+                        self.analysisData.set('eOut', eOut.tolist())
+                        self.analysisData.set('iteration', i)
+                        self.analysisData.set('curDiff', diffNorm)
+                        self.analysisData.set('curMats', curSup.tolist())
+                        url = 'http://10.103.72.187:5000/api/v1/analyzer/' + self.analysisData.get(
+                            'analyzerID') + '/update'
+                        requests.put(url, json=self.analysisData.getData())
 
-        return data, support
+                    if not self.analysisData.get('running'):
+                        lock.release()
+                        return -1
+                    lock.release()
+                # if data is None:
+                #     data = res
+                # else:
+                #     data = np.vstack([data, res])
+                #     t[2] = t[2] + timer() - s; s = timer();
+                # if support is None:
+                #     support = sup
+                # else:
+                #     support = np.vstack([support, sup])
+                #     t[3] = t[3] + timer() - s; s = timer();
+
+        return 0
 
     def processData(self, matCombinationDataCompressed, matCombinationSupportData):
         matList = matCombinationDataCompressed
@@ -186,8 +211,9 @@ class BruteForce:
 
     def run(self):
         print('start')
-        matCombinationDataCompressed, matCombinationSupportData = self.generateListOfCombinations()
-        processed = self.processData(matCombinationDataCompressed, matCombinationSupportData)
+        # matCombinationDataCompressed, matCombinationSupportData = self.generateListOfCombinations()
+        processed = self.generateListOfCombinations()
+        # processed = self.processData(matCombinationDataCompressed, matCombinationSupportData)
         if processed == -1:
             print('stopped')
         else:
