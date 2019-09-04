@@ -136,36 +136,34 @@ class BruteForce:
         lock.release()
         # data = None
         # support = None
-        t = [0,0,0,0]
+        t = [0,0]
         s = timer()
         for i in range(0, np.shape(matPerms)[0], 1):
-            if i%10 == 0:
-                print('here, ', i, ' ', t)
-            if i < 80:
-                matSet = matPerms[i];
-                res = self.mult_sets(matSet, matTables, 0)
-                t[0] = t[0] + timer() - s; s = timer();
-                sup = self.mult_sets(matSet, matTables2, 1)
-                t[1] = t[1] + timer() - s; s = timer();
-                for i in list(range(0, np.shape(res)[0], 1)):
-                    eOut = np.dot(res[i], eIn)
-                    diff = np.subtract(eOut, eDes)
-                    diffNorm = np.linalg.norm(diff)
-                    curSup = sup[i]
-                    lock.acquire(True)
-                    if diffNorm < self.analysisData.get('curDiff'):
-                        self.analysisData.set('eOut', eOut.tolist())
-                        self.analysisData.set('iteration', i)
-                        self.analysisData.set('curDiff', diffNorm)
-                        self.analysisData.set('curMats', curSup.tolist())
-                        url = 'http://10.103.72.187:5000/api/v1/analyzer/' + self.analysisData.get(
-                            'analyzerID') + '/update'
-                        requests.put(url, json=self.analysisData.getData())
+            matSet = matPerms[i];
+            res = self.mult_sets(matSet, matTables, 0)
+            t[0] = t[0] + timer() - s; s = timer();
+            sup = self.mult_sets(matSet, matTables2, 1)
+            t[1] = t[1] + timer() - s; s = timer();
+            for i in list(range(0, np.shape(res)[0], 1)):
+                eOut = np.dot(res[i], eIn)
+                diff = np.subtract(eOut, eDes)
+                diffNorm = np.linalg.norm(diff)
+                curSup = sup[i]
+                lock.acquire(True)
+                if diffNorm < self.analysisData.get('curDiff'):
+                    print('here, ', i, ' ', t)
+                    self.analysisData.set('eOut', eOut.tolist())
+                    self.analysisData.set('iteration', i)
+                    self.analysisData.set('curDiff', diffNorm)
+                    self.analysisData.set('curMats', curSup.tolist())
+                    url = 'http://10.103.72.187:5000/api/v1/analyzer/' + self.analysisData.get(
+                        'analyzerID') + '/update'
+                    requests.put(url, json=self.analysisData.getData())
 
-                    if not self.analysisData.get('running'):
-                        lock.release()
-                        return -1
+                if not self.analysisData.get('running'):
                     lock.release()
+                    return -1
+                lock.release()
                 # if data is None:
                 #     data = res
                 # else:
